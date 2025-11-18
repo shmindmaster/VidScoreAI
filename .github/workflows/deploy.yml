@@ -36,6 +36,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
+  RESOURCE_GROUP: rg-shared-web
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}

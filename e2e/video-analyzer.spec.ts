@@ -366,7 +366,6 @@ test.describe('Video Analyzer - Accessibility', () => {
     await page.keyboard.press('Enter');
     
     // Verify scroll happened
-    await page.waitForTimeout(1000);
     const uploaderSection = page.locator('#uploader-section');
     await expect(uploaderSection).toBeInViewport();
   });

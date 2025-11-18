@@ -298,7 +298,7 @@ test.describe('Layout - Scroll Behavior', () => {
 
     // Scroll down
     await page.evaluate(() => window.scrollTo(0, 500));
-    await page.waitForTimeout(300);
+    await expect.poll(async () => await page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(500);
 
     // Navigate to editor
     await page.getByRole('link', { name: 'AI Editor' }).click();

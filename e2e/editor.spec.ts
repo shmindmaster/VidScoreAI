@@ -274,20 +274,20 @@ test.describe('AI Editor - Video Generation', () => {
     // Note: The actual component may show different content during generation
     // Adjust based on actual implementation
     
-    // Wait a moment for any generation UI to appear
-    await page.waitForTimeout(1000);
+    // Wait for the style selector to disappear, indicating generation UI has appeared
+    await expect(page.getByText('Choose Your Video\'s Style')).not.toBeVisible();
 
     // The component should show some generation-related content
     // Since the VideoGeneration component is not fully defined in the codebase provided,
     // we'll verify that we're no longer on the style selector
-    await expect(page.getByText('Choose Your Video\'s Style')).not.toBeVisible();
+    // (Already checked above)
   });
 
   test('TC-ED-008: Start new project flow', async ({ page }) => {
     await navigateToGeneration(page);
 
-    // Wait for any generation process
-    await page.waitForTimeout(1000);
+    // Wait for the style selector to disappear, indicating generation UI has appeared
+    await expect(page.getByText('Choose Your Video\'s Style')).not.toBeVisible();
 
     // Look for "Start New Project" button (if it appears after generation)
     // This test may need adjustment based on actual VideoGeneration component implementation

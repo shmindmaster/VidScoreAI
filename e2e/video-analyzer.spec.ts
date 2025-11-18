@@ -38,10 +38,7 @@ test.describe('Video Analyzer - Hero Section', () => {
     // Test scroll functionality
     await ctaButton.click();
     
-    // Wait for scroll animation
-    await page.waitForTimeout(1000);
-
-    // Verify uploader section is in viewport
+    // Wait for uploader section to be in viewport after scroll
     const uploaderSection = page.locator('#uploader-section');
     await expect(uploaderSection).toBeInViewport();
   });

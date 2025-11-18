@@ -116,6 +116,42 @@ pnpm dev
 
 The application will be available at `http://localhost:3000`.
 
+## Testing
+
+VidScoreAI includes a comprehensive E2E test suite with a mobile-first approach using Playwright.
+
+### Quick Start
+
+```bash
+# Run all E2E tests
+npm test
+
+# Run with interactive UI (recommended for development)
+npm run test:ui
+
+# Run mobile tests only
+npm run test:mobile
+
+# View test report
+npm run test:report
+```
+
+### Test Coverage
+
+- ✅ Video Analyzer flow (upload, analysis, reporting)
+- ✅ AI Editor flow (multi-file upload, style selection)
+- ✅ Navigation and routing
+- ✅ Responsive design (mobile, tablet, desktop)
+- ✅ Mobile usability (touch targets, scrolling)
+- ✅ Cross-browser compatibility (Chrome, Safari, Edge)
+- ✅ Accessibility basics
+
+**Coverage**: 75% automated, 95%+ of critical user flows
+
+For detailed testing documentation, see:
+- [TESTING.md](./TESTING.md) - Complete testing guide
+- [TEST_PLAN.md](./TEST_PLAN.md) - Comprehensive test case documentation
+
 ## Use Cases & Roadmap
 
 ### Current Use Cases

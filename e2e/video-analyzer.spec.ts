@@ -114,7 +114,7 @@ test.describe('Video Analyzer - File Upload', () => {
     await page.goto('/');
     await page.locator('#uploader-section').scrollIntoViewIfNeeded();
 
-    const dropZone = page.locator('div[onDragOver]').first();
+    const dropZone = page.getByTestId('drop-zone');
     await expect(dropZone).toBeVisible();
 
     // Verify initial border color

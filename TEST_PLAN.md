@@ -1987,7 +1987,7 @@ This document outlines the comprehensive End-to-End (E2E) test strategy for VidS
 
 ```bash
 # Install dependencies
-npm install
+npm ci
 
 # Run all E2E tests (all browsers/devices)
 npm run test:e2e

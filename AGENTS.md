@@ -1,6 +1,8 @@
-# FlashMaster - Agent Development Guide
+# VidScoreAI - Agent Development Guide
 
-## Architecture Overview
+> NOTE: This file is a generic FlashMaster template and **not** specific to VidScoreAI. For real VidScoreAI architecture and agent behavior, see README.md, app/page.tsx, app/editor/page.tsx, components/*, and copilot-instructions.md in this repo.
+
+## Architecture Overview (generic template)
 
 FlashMaster is a **Next.js 15 full-stack application** for AI-powered flashcard learning, deployed to Azure Static Web Apps.
 

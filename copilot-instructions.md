@@ -15,7 +15,7 @@ Treat this as a **frontend-only UX prototype** for the VidScoreAI concept, not a
 ## Tech Stack (from code, not README)
 
 - **Framework**: Next.js 13.5 (`app` directory), React 18, TypeScript.
-- **Styling**: Tailwind CSS 3.3, shadcn/ui + Radix primitives.
+- **Styling**: Tailwind CSS 3.3, shadcn/ui + Radix UI.
 - **Components**:
   - `app/page.tsx` – main marketing + upload + scoring flow.
   - `app/editor/page.tsx` – multi-file editor-style flow.
@@ -24,7 +24,25 @@ Treat this as a **frontend-only UX prototype** for the VidScoreAI concept, not a
   - `components/performance-report.tsx` – static overall + per-section scores and suggestions, PDF export via `html2pdf.js`.
 - **Testing**: Playwright E2E (`playwright.config.ts`, `e2e/` directory) with **mobile-first** projects.
 
-There is **no** `fetch`, `axios`, or `NextRequest`/`NextResponse` usage anywhere in this repo.
+There is **no** `fetch`, `axios`, or `NextRequest`/`NextResponse` usage anywhere in this repo today.
+
+## Target AI Architecture on MahumTech Azure
+
+When you extend VidScoreAI beyond the current frontend-only implementation, assume this target stack:
+
+- **LLM core**: `gpt-5.1-mini` on the shared `shared-openai-eastus2` Azure OpenAI resource.
+- **Embeddings**: `text-embedding-3-small` for indexing transcripts, briefs, and historical performance.
+- **Vector/search**:
+  - Shared Postgres (`pg-shared-apps-eastus2`) with `pgvector` for similarity search.
+  - Azure AI Search (`shared-search-standard-eastus2`) for hybrid semantic/keyword search over metadata.
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`) for raw uploads, thumbnails, subtitles, and JSON analysis artifacts.
+- **Audio/vision**: Azure GPT-4o-mini audio/vision tiers for transcript extraction, sentiment/tone analysis, and frame-level cues.
+
+Server-side, implement an API layer (Next.js API routes or Azure Functions proxied from this app) that:
+
+- Accepts video uploads (typically via SAS URLs to Blob).
+- Runs multi-step analysis (transcript → embeddings → LLM reasoning) and returns **structured JSON** that the existing UI can render.
+- Persists analysis runs so you can compare performance across time and variants.
 
 ## Local Development
 

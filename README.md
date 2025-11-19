@@ -168,6 +168,54 @@ For detailed testing documentation, see:
 - **Thumbnail Generation**: AI-powered thumbnail creation and optimization
 - **Trend Analysis**: Industry trend identification and content opportunity detection
 
+## AI Architecture – Target State on MahumTech Azure
+
+While the current demo runs entirely in the browser and simulates scoring, VidScoreAI is designed to evolve into a **full Azure-based AI video intelligence platform**:
+
+- **LLM core**: `gpt-5.1-mini` on the shared `shared-openai-eastus2` Azure OpenAI resource for reasoning, narrative explanations, and recommendation text.
+- **Embeddings & search**: `text-embedding-3-small` for indexing transcripts, creative briefs, and historical performance data in:
+  - Shared Postgres with `pgvector` (for similarity over transcripts and briefs), and/or
+  - Azure AI Search (`shared-search-standard-eastus2`) for metadata and keyword search.
+- **Vision & video understanding**: Azure vision/music/video capabilities via the same `shared-openai-eastus2` endpoint to extract:
+  - Hook detection, scene changes, branding/logo presence.
+  - Visual clutter, text overlay legibility, safe zones.
+- **Audio & speech**: Low-cost Azure GPT-4o-mini audio/realtime tiers for:
+  - Transcript generation.
+  - Sentiment/tone analysis of voiceover.
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`) for raw uploads, processed clips, and derived artifacts (thumbnails, subtitles, JSON reports).
+- **Serving layer**: Next.js frontend backed by an API layer (Azure Functions or Next.js API routes) that:
+  - Orchestrates multi-step analysis pipelines.
+  - Persists structured scoring JSON, explanations, and recommendations.
+  - Exposes webhooks/exports for CRMs, ad platforms, and analytics tools.
+
+## AI Roadmap
+
+### vNext (short term)
+
+- Replace simulated scores with a real backend API that:
+  - Accepts video uploads (via Azure Blob + SAS URLs).
+  - Runs transcript + frame sampling + simple LLM-based scoring using `gpt-5.1-mini`.
+  - Returns structured JSON for the existing performance report UI.
+- Add a **VidScore Copilot** panel that:
+  - Explains *why* a given video scored the way it did.
+  - Suggests specific edits, hooks, and CTAs based on domain guidelines for each platform.
+- Store analysis snapshots in shared Postgres for history and comparisons.
+
+### vLater (medium term)
+
+- Introduce **RAG over your own video library**:
+  - Embed historical transcripts and performance metrics into pgvector / Azure AI Search.
+  - Let users ask questions like "What makes our top 10% TikTok ads different from the rest?".
+- Add **multi-agent orchestration**:
+  - A planner agent proposes test ideas and variants.
+  - An execution agent generates scripts, hooks, and thumbnail briefs.
+  - A critic agent reviews variants before they’re pushed to ad platforms.
+- Build integrations for CRMs, ad managers, and analytics (webhooks + export APIs) so VidScoreAI slots into existing SME marketing stacks.
+
+### Current Implementation vs Target State
+
+Today’s repo contains the **Next.js UI, upload experience, and static performance report**. The AI features above describe the **intended Azure-based architecture** this app is meant to evolve into.
+
 ## License
 
 Proprietary - All rights reserved

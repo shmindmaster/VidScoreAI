@@ -21,13 +21,15 @@ Built for marketing teams that need to maximize ROI on video content without lar
 
 ### Technology Stack
 
-- **Frontend**: React 19, TypeScript, Next.js 15, Tailwind CSS
-- **Backend**: Node.js, Express, TypeScript
-- **Database**: Azure Database for PostgreSQL
-- **AI Services**: Azure OpenAI (Responses API), Azure Computer Vision, Azure AI Search
-- **Storage**: Azure Blob Storage for video assets
-- **Video Processing**: Azure Media Services / FFmpeg
-- **Deployment**: Azure Static Web Apps / Azure App Service
+> **Current repo vs target architecture**: This repository contains the **Next.js frontend** only. The Node/Express, Postgres, and Azure AI pieces below describe the **target backend architecture** running on the shared MahumTech platform.
+
+- **Frontend (current repo)**: Next.js 13.5 App Router, React 18, TypeScript, Tailwind CSS
+- **Backend (target)**: Node.js, Express/FastAPI, TypeScript
+- **Database (target)**: Azure Database for PostgreSQL
+- **AI Services (target)**: Azure OpenAI (Responses API), Azure Computer Vision, Azure AI Search
+- **Storage (target)**: Azure Blob Storage for video assets
+- **Video Processing (target)**: Azure Media Services / FFmpeg
+- **Deployment**: Azure Static Web Apps (frontend) / Azure App Service or Container Apps (backend)
 
 ### Shared Azure Infrastructure
 

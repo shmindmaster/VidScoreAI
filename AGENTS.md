@@ -1,6 +1,18 @@
 # VidScoreAI - Agent Development Guide
 
-> NOTE: This file is a generic FlashMaster template and **not** specific to VidScoreAI. For real VidScoreAI architecture and agent behavior, see README.md, app/page.tsx, app/editor/page.tsx, components/*, and copilot-instructions.md in this repo.
+## Architecture Overview (VidScoreAI)
+
+VidScoreAI is currently a **frontend-only UX demo** implemented as a **Next.js 13.5 App Router** app:
+
+- No `app/api` routes, no database client, and no Azure/OpenAI SDKs.
+- All scoring and "analysis" is simulated in the browser:
+  - `app/page.tsx` → upload → timed loading sequence → static `PerformanceReport`.
+  - `app/editor/page.tsx` → multi-file editor flow with no backend jobs.
+- Playwright tests validate the upload/analysis flows and responsiveness.
+
+The README describes the **target Azure backend architecture** (Azure OpenAI, Computer Vision, AI Search, Postgres, Blob Storage, Media Services) that is **not yet implemented in this repo**. Any real AI or backend must be added via proper API routes or external services.
+
+> NOTE: The remaining sections below are cloned from a generic FlashMaster Next.js template and are **not** VidScoreAI-specific. Use them only as generic Azure OpenAI / Next.js patterns, and rely on `README.md` + `copilot-instructions.md` for VidScoreAI behavior.
 
 ## Architecture Overview (generic template)
 

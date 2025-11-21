@@ -42,12 +42,8 @@ applyTo: '**/azure-pipelines.yml, **/azure-pipelines*.yml, **/*.pipeline.yml'
 
 ## Deployment Strategies
 
-- Implement proper environment promotion (dev → staging → production)
 - Use deployment jobs with proper environment targeting
-- Implement blue-green or canary deployment strategies when appropriate
-- Include rollback mechanisms and health checks
 - Use infrastructure as code (ARM, Bicep, Terraform) for consistent deployments
-- Implement proper configuration management per environment
 
 ## Variable and Parameter Management
 
@@ -59,11 +55,9 @@ applyTo: '**/azure-pipelines.yml, **/azure-pipelines*.yml, **/*.pipeline.yml'
 
 ## Performance Optimization
 
-- Use parallel jobs and matrix strategies when appropriate
 - Implement proper caching strategies for dependencies and build outputs
 - Use shallow clone for Git operations when full history isn't needed
 - Optimize Docker image builds with multi-stage builds and layer caching
-- Monitor pipeline performance and optimize bottlenecks
 - Use pipeline resource triggers efficiently
 
 ## Monitoring and Observability
@@ -75,23 +69,12 @@ applyTo: '**/azure-pipelines.yml, **/azure-pipelines*.yml, **/*.pipeline.yml'
 - Use pipeline analytics to identify improvement opportunities
 - Document pipeline behavior and troubleshooting steps
 
-## Template and Reusability
-
-- Create pipeline templates for common patterns
-- Use extends templates for complete pipeline inheritance
-- Implement step templates for reusable task sequences
-- Use variable templates for complex variable logic
-- Version templates appropriately for stability
-- Document template parameters and usage examples
 
 ## Branch and Trigger Strategy
 
-- Implement appropriate triggers for different branch types
 - Use path filters to trigger builds only when relevant files change
 - Configure proper CI/CD triggers for main/master branches
 - Use pull request triggers for code validation
-- Implement scheduled triggers for maintenance tasks
-- Consider resource triggers for multi-repository scenarios
 
 ## Example Structure
 
@@ -125,13 +108,13 @@ stages:
             displayName: 'Use .NET SDK'
             inputs:
               version: '8.x'
-
+          
           - task: DotNetCoreCLI@2
             displayName: 'Restore dependencies'
             inputs:
               command: 'restore'
               projects: '**/*.csproj'
-
+          
           - task: DotNetCoreCLI@2
             displayName: 'Build application'
             inputs:
@@ -170,6 +153,4 @@ stages:
 - Mixing build and deployment logic in a single stage
 - Not implementing proper error handling and cleanup
 - Using deprecated task versions without upgrade plans
-- Creating monolithic pipelines that are difficult to maintain
 - Not using proper naming conventions for clarity
-- Ignoring pipeline security best practices

@@ -58,24 +58,10 @@ Use Terraform modules to group reusable infrastructure components. For any resou
 
 ## 8. State Management
 
-- **Use a remote backend** (like Azure Storage with state locking) to store Terraform state securely
-- Enable team collaboration
 - **Never commit state files** to source control
-- This prevents conflicts and keeps the infrastructure state consistent
 
-## 9. Document and Diagram
 
-- **Maintain up-to-date documentation**
-- **Update README.md** with any new variables, outputs, or usage instructions whenever the code changes
-- Consider using tools like `terraform-docs` for automation
-- **Update architecture diagrams** to reflect infrastructure changes after each significant update
-- Well-documented code and diagrams ensure the whole team understands the infrastructure
-
-## 10. Validate and Test Changes
+## 9. Validate Changes
 
 - **Run `terraform validate`** and review the `terraform plan` output before applying changes
 - Catch errors or unintended modifications early
-- **Consider implementing automated checks**:
-  - CI pipeline
-  - Pre-commit hooks
-  - Enforce formatting, linting, and basic validation

@@ -44,10 +44,6 @@ applyTo: '**/*.bicep'
 -   Avoid excessive nesting of child resources
 -   Use parent property or nesting instead of constructing resource names for child resources
 
-## Security
-
--   Use resource properties directly in outputs (e.g., storageAccount.properties.primaryEndpoints)
-
 ## Documentation
 
 -   Include helpful // comments within your Bicep files to improve readability

@@ -270,7 +270,7 @@ Performance isn't just a buzzword—it's the difference between a product people
 - **Horizontal Scaling:** Design stateless services, use sharding/partitioning, and load balancers.
 - **Auto-Scaling:** Use cloud auto-scaling groups and set sensible thresholds.
 - **Bottleneck Analysis:** Identify and address single points of failure.
-- **Distributed Systems:** Use idempotent operations, retries, and circuit breakers.
+- **Distributed Systems:** Use idempotent operations and retries.
 
 ### Security and Performance
 - **Efficient Crypto:** Use hardware-accelerated and well-maintained cryptographic libraries.

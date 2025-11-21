@@ -53,12 +53,6 @@ For development of modules, especially Azure Verified Modules, see [azure-verifi
 - SHOULD avoid complex conditional logic that makes code hard to understand
 - MUST NOT use `local-exec` provisioners unless absolutely necessary
 
-**Security:**
-
-- MUST avoid overly permissive IAM roles or network rules
-- MUST NOT disable security features for convenience
-- MUST NOT use default passwords or keys
-
 **Operational:**
 
 - MUST NOT apply Terraform changes directly to production without testing
@@ -68,7 +62,7 @@ For development of modules, especially Azure Verified Modules, see [azure-verifi
 - MUST only use a Terraform state file (`**/*.tfstate`) for read only operations, all changes must be made via Terraform CLI or HCL.
 - MUST only use the contents of `**/.terraform/**` (fetched modules and providers) for read only operations.
 
-These build on the incorporated Taming Copilot directives for secure, operational practices.
+These build on the incorporated Taming Copilot directives for operational practices.
 
 ---
 
@@ -102,12 +96,10 @@ Follow AVM-aligned coding standards in solution code to maintain consistency:
 
 - **Variable naming**: Use snake_case for all variable names (per TFNFR4 and TFNFR16). Be descriptive and consistent with naming conventions.
 - **Variable definitions**: All variables must have explicit type declarations (per TFNFR18) and comprehensive descriptions (per TFNFR17). Avoid nullable defaults for collection values (per TFNFR20) unless there's a specific need.
-- **Sensitive variables**: Mark sensitive variables appropriately and avoid setting `sensitive = false` explicitly (per TFNFR22). Handle sensitive default values correctly (per TFNFR23).
 - **Dynamic blocks**: Use dynamic blocks for optional nested objects where appropriate (per TFNFR12), and leverage `coalesce` or `try` functions for default values (per TFNFR13).
 - **Code organization**: Consider using `locals.tf` specifically for local values (per TFNFR31) and ensure precise typing for locals (per TFNFR33).
 
-
-## 7. Outputs
+## 6. Outputs
 
 - **Avoid unnecessary outputs**, only use these to expose information needed by other configurations.
 - Provide clear descriptions for all outputs
@@ -124,7 +116,7 @@ output "virtual_network_id" {
 }
 ```
 
-## 8. Local Values Usage
+## 7. Local Values Usage
 
 - Use locals for computed values and complex expressions
 - Improve readability by extracting repeated expressions
@@ -138,13 +130,13 @@ locals {
     Owner       = var.owner
     CreatedBy   = "terraform"
   }
-
+  
   resource_name_prefix = "${var.project_name}-${var.environment}"
   location_short       = substr(var.location, 0, 3)
 }
 ```
 
-## 9. Follow recommended Terraform practices
+## 8. Follow recommended Terraform practices
 
 - **Redundant depends_on Detection**: Search and remove `depends_on` where the dependent resource is already referenced implicitly in the same resource block. Retain `depends_on` only where it is explicitly required.  Never depend on module outputs.
 
@@ -156,13 +148,11 @@ locals {
 
 - **Versioning**: Target latest stable Terraform and Azure provider versions. Specify versions in code and keep updated (TFFR3).
 
-## 10. Folder Structure
+## 9. Folder Structure
 
 Use a consistent folder structure for Terraform configurations.
 
-Use tfvars to modify environmental differences. In general, aim to keep environments similar whilst cost optimising for non-production environments.
-
-Antipattern - branch per environment, repository per environment, folder per environment - or similar layouts that make it hard to test the root folder logic between environments.
+Use tfvars to modify environmental differences when needed.  
 
 Be aware of tools such as Terragrunt which may influence this design.
 
@@ -176,10 +166,6 @@ my-azure-app/
 │   ├── outputs.tf                  # Outputs
 │   ├── terraform.tf                # Provider configuration
 │   ├── locals.tf                   # Local values
-│   └── environments/               # Environment-specific configurations
-│       ├── dev.tfvars              # Development environment
-│       ├── test.tfvars             # Test environment
-│       └── prod.tfvars             # Production environment
 ├── .github/workflows/              # CI/CD pipelines (if using github)
 ├── .azdo/                          # CI/CD pipelines (suggested if using Azure DevOps)
 └── README.md                       # Documentation
@@ -194,7 +180,6 @@ Follow AVM specifications TFNFR1, TFNFR2, TFNFR3, and TFNFR4 for consistent file
 ### Resource Naming and Tagging
 
 - Follow [Azure naming conventions](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming)
-- Use consistent region naming and variables for multi-region deployments
 - Implement consistent tagging.
 
 ### Resource Group Strategy
@@ -205,35 +190,16 @@ Follow AVM specifications TFNFR1, TFNFR2, TFNFR3, and TFNFR4 for consistent file
 
 ### Networking Considerations
 
-- Validate existing VNet/subnet IDs before creating new network resources (for example, is this solution being deployed into an existing hub & spoke landing zone)
-- Use NSGs and ASGs appropriately
-- Implement private endpoints for PaaS services when required, use resource firewall restrictions to restrict public access otherwise.  Comment exceptions where public endpoints are required.
-
-### Security and Compliance
-
-- Use Managed Identities instead of service principals
-- Implement Key Vault with appropriate RBAC.
-- Enable diagnostic settings for audit trails
-- Follow principle of least privilege
-
-## Cost Management
-
-- Confirm budget approval for expensive resources
-- Use environment-appropriate sizing (dev vs prod)
-- Ask for cost constraints if not specified
+- Validate existing VNet/subnet IDs before creating new network resources
 
 ## State Management
 
-- Use remote backend (Azure Storage) with state locking
 - Never commit state files to source control
-- Enable encryption at rest and in transit
 
 ## Validation
 
-- Do an inventory of existing resources and offer to remove unused resource blocks.
 - Run `terraform validate` to check syntax
 - Ask before running `terraform plan`.  Terraform plan will require a subscription ID, this should be sourced from the ARM_SUBSCRIPTION_ID environment variable, *NOT* coded in the provider block.
-- Test configurations in non-production environments first
 - Ensure idempotency (multiple applies produce same result)
 
 ## Fallback Behavior

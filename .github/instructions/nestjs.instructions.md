@@ -139,9 +139,6 @@ export class CreateUserDto {
 
   @IsString()
   @MinLength(8)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-    message: 'Password must contain uppercase, lowercase and number',
-  })
   password: string;
 }
 ```
@@ -166,7 +163,7 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @OneToMany(() => Post, post => post.author)
@@ -185,28 +182,6 @@ export class User {
 - Implement complex queries in repository methods
 - Use query builders for dynamic queries
 
-## Authentication and Authorization
-
-### **JWT Authentication**
-- Implement JWT-based authentication with Passport
-- Use guards to protect routes
-- Create custom decorators for user context
-
-```typescript
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> {
-    return super.canActivate(context);
-  }
-
-  handleRequest(err: any, user: any, info: any) {
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
-    return user;
-  }
-}
-```
 
 ### **Role-Based Access Control**
 - Implement RBAC using custom guards and decorators
@@ -313,7 +288,6 @@ describe('UsersService', () => {
 ### **E2E Testing**
 - Test complete application flows
 - Use supertest for HTTP testing
-- Test authentication and authorization flows
 
 ## Performance and Security
 
@@ -393,7 +367,6 @@ export class ConfigService {
 - [ ] Appropriate error handling and exception filters
 - [ ] Consistent naming conventions
 - [ ] Proper module organization and imports
-- [ ] Security considerations (authentication, authorization, input sanitization)
 - [ ] Performance considerations (caching, database optimization)
 - [ ] Comprehensive testing coverage
 

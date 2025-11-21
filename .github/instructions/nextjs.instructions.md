@@ -109,22 +109,18 @@ Always move client-only UI into a Client Component and import it directly in you
 - **Dynamic Segments:** Use `[param]` for dynamic API routes (e.g., `app/api/users/[id]/route.ts`).
 - **Validation:** Always validate and sanitize input. Use libraries like `zod` or `yup`.
 - **Error Handling:** Return appropriate HTTP status codes and error messages.
-- **Authentication:** Protect sensitive routes using middleware or server-side session checks.
 
 ## 5. General Best Practices
 
 - **TypeScript:** Use TypeScript for all code. Enable `strict` mode in `tsconfig.json`.
 - **ESLint & Prettier:** Enforce code style and linting. Use the official Next.js ESLint config.
+- **Environment Variables:** Store configuration in `.env.local`.
 - **Testing:** Use Jest, React Testing Library, or Playwright. Write tests for all critical logic and components.
 - **Accessibility:** Use semantic HTML and ARIA attributes. Test with screen readers.
 - **Performance:**
   - Use built-in Image and Font optimization.
   - Use Suspense and loading states for async data.
   - Avoid large client bundles; keep most logic in Server Components.
-- **Security:**
-  - Sanitize all user input.
-  - Use HTTPS in production.
-  - Set secure HTTP headers.
 - **Documentation:**
   - Write clear README and code comments.
   - Document public APIs and components.

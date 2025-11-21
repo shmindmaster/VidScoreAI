@@ -30,13 +30,13 @@ There is **no** `fetch`, `axios`, or `NextRequest`/`NextResponse` usage anywhere
 
 When you extend VidScoreAI beyond the current frontend-only implementation, assume this target stack:
 
-- **LLM core**: `gpt-5.1-mini` on the shared `shared-openai-eastus2` Azure OpenAI resource.
+- **LLM core**: `gpt-5.1-mini` on the shared `shared-openai-eastus2` Azure OpenAI resource (Azure OpenAI exclusively, no fallback).
 - **Embeddings**: `text-embedding-3-small` for indexing transcripts, briefs, and historical performance.
+- **Vision**: `gpt-image-1-mini` for frame-level analysis and visual cues.
 - **Vector/search**:
   - Shared Postgres (`pg-shared-apps-eastus2`) with `pgvector` for similarity search.
   - Azure AI Search (`shared-search-standard-eastus2`) for hybrid semantic/keyword search over metadata.
-- **Storage**: Azure Blob Storage (`stmahumsharedapps`) for raw uploads, thumbnails, subtitles, and JSON analysis artifacts.
-- **Audio/vision**: Azure GPT-4o-mini audio/vision tiers for transcript extraction, sentiment/tone analysis, and frame-level cues.
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai-videos`) for raw uploads, thumbnails, subtitles, and JSON analysis artifacts.
 
 Server-side, implement an API layer (Next.js API routes or Azure Functions proxied from this app) that:
 

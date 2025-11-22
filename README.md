@@ -2,7 +2,7 @@
 
 **Industry**: Marketing  
 **Domain**: https://vidscoreai.shtrial.com  
-**Type**: Frontend Demo (Backend AI Pending)
+**Type**: Full-stack AI Application (Next.js with API routes)
 
 ## Overview
 
@@ -24,7 +24,9 @@ VidScoreAI is a platform for analyzing video performance and generating actionab
   - Embeddings: `text-embedding-3-small`
   - Vision: `gpt-image-1-mini`
 - **Planned Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai-videos`)
-- **Deployment**: Azure Static Web App (`rg-shared-web`)
+- **Deployment**: 
+  - Frontend: Azure Static Web App (`rg-shared-web`)
+  - Backend: Same SWA (Next.js API routes) or Container App (`rg-shared-apps`) if split later
 
 ## Architecture
 

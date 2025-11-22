@@ -17,37 +17,57 @@ VidScoreAI is a platform for analyzing video performance and generating actionab
 
 ## Tech Stack
 
-- **Frontend**: Next.js 13.5, React, TypeScript, TailwindCSS
-- **Planned Backend**: Azure Functions or Container Apps
-- **Planned AI**: Azure OpenAI + Azure Computer Vision
-  - Chat: `gpt-5.1-mini`
+- **Framework**: Next.js 15 (App Router), React 18, TypeScript
+- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
+- **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
+  - Chat: `gpt-4o` (default), `gpt-5.1` (heavy tasks)
   - Embeddings: `text-embedding-3-small`
-  - Vision: `gpt-image-1-mini`
-- **Planned Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai-videos`)
+  - Image: `gpt-image-1-mini`
+- **Search**: Azure AI Search (`shared-search-standard-eastus2`, index prefix: `vidscoreai`)
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`, prefix: `vidscoreai/`)
 - **Deployment**: 
-  - Frontend: Azure Static Web App (`rg-shared-web`)
-  - Backend: Same SWA (Next.js API routes) or Container App (`rg-shared-apps`) if split later
+  - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
+  - Backend: Next.js API routes within the same SWA (full-stack)
+- **Custom Domain**: `vidscoreai.shtrial.com`
 
 ## Architecture
 
-- **Current**: Frontend-only demo
-- **Planned**: Full-stack with AI backend
+- **Monorepo**: pnpm workspaces with Turborepo
+- **Apps**:
+  - `apps/frontend`: Next.js 15 full-stack application (App Router)
+- **Packages**:
+  - `packages/shared-ai`: Shared Azure OpenAI client (`@shared/ai`)
+  - `packages/shared-data`: Shared Postgres, Search, Storage clients (`@shared/data`)
+- **API Routes**: Next.js App Router API routes within the frontend app
 
 ## Environment Variables
 
-See `.env.example` for the planned schema. Key variables:
+**No Key Vault**: All secrets/config via App Settings and environment variables.
+
+**No OpenAI.com**: Only Azure OpenAI endpoint (`shared-openai-eastus2`).
+
+See `docs/CONFIG.md` and `.env.example` for the complete schema. Key variables:
 
 ```env
-# Azure OpenAI (Standardized - shared across all portfolio apps)
-AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/
-AZURE_OPENAI_API_KEY=<your_key>
-AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-5.1-mini
-AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small
-AZURE_OPENAI_IMAGE_DEPLOYMENT=gpt-image-1-mini
+# Azure OpenAI (Shared - via @shared/ai package)
+AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/openai/v1/
+AZURE_OPENAI_API_KEY=<your-key>
+AZURE_OPENAI_DEFAULT_CHAT_MODEL=gpt-4o
+AZURE_OPENAI_MODEL_HEAVY=gpt-5.1
+AZURE_OPENAI_MODEL_EMBED=text-embedding-3-small
+AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
 
-# Azure Computer Vision (Planned)
-AZURE_VISION_ENDPOINT=https://shared-openai-eastus2.cognitiveservices.azure.com/
-AZURE_VISION_KEY=<your_key>
+# PostgreSQL (Shared - via @shared/data package)
+SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
+
+# Azure AI Search (Shared - via @shared/data package)
+AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net
+AZURE_SEARCH_API_KEY=<your-key>
+AZURE_SEARCH_INDEX_PREFIX=vidscoreai
+
+# Azure Storage (Shared - via @shared/data package)
+AZURE_STORAGE_CONNECTION_STRING=<connection-string>
+APP_STORAGE_PREFIX=vidscoreai
 ```
 
 ## Setup
@@ -73,6 +93,13 @@ pnpm test             # Run Playwright tests
 
 ## Deployment
 
-Deployed via GitHub Actions workflow (`.github/workflows/deploy.yml`) to Azure Static Web App.
+- **Frontend**: Deployed to Azure Static Web App `vidscoreai` in `rg-shared-web` via GitHub Actions
+- **Backend**: Next.js API routes within the same Static Web App (full-stack)
+- **CI/CD**: `.github/workflows/ci-cd.yml` - Automatically deploys on push to `main` branch
+
+## Documentation
+
+- `docs/ARCHITECTURE.md` - Detailed architecture documentation
+- `docs/CONFIG.md` - Environment variables and configuration guide
 
 

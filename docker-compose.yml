@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
     container_name: vidscore-ai
     ports:
-      - "3000:80"
+      - "3100:80" # VidScoreAI Web (Next.js)
     environment:
       - NODE_ENV=production
     restart: unless-stopped

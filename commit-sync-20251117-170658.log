@@ -1,3 +1,0 @@
-[2025-11-17 17:07:00] [WARN] Excluding sensitive file: shared-resources-setup-20251117-164613.log
-[2025-11-17 17:07:00] [INFO] Found 1 safe files to commit in VidScoreAI: .env.example
-[2025-11-17 17:07:00] [WARN] No files staged in VidScoreAI

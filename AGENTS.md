@@ -2,15 +2,33 @@
 
 ## Architecture Overview (VidScoreAI)
 
-VidScoreAI is currently a **frontend-only UX demo** implemented as a **Next.js 13.5 App Router** app:
+VidScoreAI is a **Next.js 15 full-stack application** for AI-powered video scoring and marketing analytics.
 
-- No `app/api` routes, no database client, and no Azure/OpenAI SDKs.
-- All scoring and "analysis" is simulated in the browser:
-  - `app/page.tsx` → upload → timed loading sequence → static `PerformanceReport`.
-  - `app/editor/page.tsx` → multi-file editor flow with no backend jobs.
-- Playwright tests validate the upload/analysis flows and responsiveness.
+## Project Structure
 
-The README describes the **target Azure backend architecture** (Azure OpenAI, Computer Vision, AI Search, Postgres, Blob Storage, Media Services) that is **not yet implemented in this repo**. Any real AI or backend must be added via proper API routes or external services.
+```
+VidScoreAI/
+├── apps/
+│   └── frontend/          # Next.js 15 full-stack application (App Router)
+├── packages/
+│   ├── shared-ai/         # Shared Azure OpenAI client (@shared/ai)
+│   └── shared-data/       # Shared Postgres, Search, Storage clients (@shared/data)
+```
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router), React 18, TypeScript
+- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
+- **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
+  - Chat: `gpt-4o` (default), `gpt-5.1` (heavy tasks)
+  - Embeddings: `text-embedding-3-small`
+  - Image: `gpt-image-1-mini`
+- **Search**: Azure AI Search (`shared-search-standard-eastus2`, index prefix: `vidscoreai`)
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`, prefix: `vidscoreai/`)
+- **Deployment**: 
+  - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
+  - Backend: Next.js API routes within the same SWA (full-stack)
+- **Custom Domain**: `vidscoreai.shtrial.com`
 
 > NOTE: The remaining sections below are cloned from a generic FlashMaster Next.js template and are **not** VidScoreAI-specific. Use them only as generic Azure OpenAI / Next.js patterns, and rely on `README.md` + `copilot-instructions.md` for VidScoreAI behavior.
 

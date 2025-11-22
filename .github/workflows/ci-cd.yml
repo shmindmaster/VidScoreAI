@@ -59,8 +59,9 @@ jobs:
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_VIDSCOREAI }}
           app_location: "apps/frontend"
           output_location: "apps/frontend/.next"
           resource_group_name: "rg-shared-web"
+          app_name: "vidscoreai"
 

@@ -1,42 +1,113 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ===================================================================
+# This file tells Git which files it should not track.
+#
+# If you've just updated this file and files are still being tracked,
+# run the following commands to clear the Git cache:
+#
+#   git rm -r --cached .
+#   git add .
+#   git commit -m "chore: Clean repo and apply .gitignore"
+# ===================================================================
 
-# dependencies
-/node_modules
-/.pnp
+# ====================
+# Dependencies & Package Managers
+# ====================
+node_modules/
+.pnp/
 .pnp.js
+.yarn/
+.pnpm-store/
+# pnpm lockfile should be committed, but ignore others
+package-lock.json
+yarn.lock
 
-# testing
-/coverage
-/test-results/
-/playwright-report/
-/playwright/.cache/
+# ====================
+# Turbo Build Artifacts
+# ====================
+.turbo/
 
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
+# ====================
+# Production & Other Build Outputs
+# ====================
+dist/
+build/
+.next/
+out/
 *.tsbuildinfo
 next-env.d.ts
 
+# ====================
+# Compiled & Generated Code
+# ====================
+# TypeScript build info
+*.tsbuildinfo
+
+# ====================
+# Test Artifacts & Logs
+# ====================
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
+test-artifacts/
+playwright/.cache/
+
+# ====================
+# Environment & Secret Files
+# ====================
+.env*
+*.pem
+
+# Azure credentials - DO NOT COMMIT
+*-credentials.json
+sp-credentials.json
+acr-credentials.json
+azure-ai-credentials.json
+db-credentials.json
+storage-credentials.json
+
+# ====================
+# IDE & Editor-Specific Files
+# ====================
+# VS Code - Ignore user-specific files but allow shared settings
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# JetBrains IDEs (PhpStorm, WebStorm, etc.)
+.idea/
+*.swp
+*.swo
+*~
+
+# ====================
+# OS-Specific Files
+# ====================
+.DS_Store
+Thumbs.db
+
+# ====================
+# Debug Logs
+# ====================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ====================
+# Platform & Service-Specific
+# ====================
+.vercel/
+
+# ====================
+# Logs
+# ====================
+logs/
+*.log
+
+# ====================
 # GitHub Copilot instructions - keep in sync
+# ====================
 !.github/instructions/

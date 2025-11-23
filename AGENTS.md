@@ -1,5 +1,12 @@
 # VidScoreAI - Agent Development Guide
 
+## Project Overview
+
+**Application**: AI-Powered Video Performance Analysis  
+**URL**: https://vidscoreai.shtrial.com  
+**Stack**: Next.js 15 (App Router) + React 18 + TypeScript + Azure AI Services  
+**Monorepo**: Yes (apps/frontend, packages/*)
+
 ## Architecture Overview (VidScoreAI)
 
 VidScoreAI is a **Next.js 15 full-stack application** for AI-powered video scoring and marketing analytics.

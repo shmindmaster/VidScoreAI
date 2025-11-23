@@ -1,7 +1,12 @@
-"use client";
+'use client';
 
+import {
+  Clapperboard,
+  MessageCircle,
+  Rocket,
+  ShoppingCart,
+} from 'lucide-react';
 import { useState } from 'react';
-import { Rocket, MessageCircle, Clapperboard, ShoppingCart } from 'lucide-react';
 
 interface StyleSelectorProps {
   isVisible: boolean;
@@ -13,29 +18,36 @@ const styles = [
     id: 'high-impact',
     name: 'High-Impact Ad',
     icon: Rocket,
-    description: 'Fast-paced cuts, punchy text, and a strong call-to-action. Perfect for TikTok, Reels & Shorts.'
+    description:
+      'Fast-paced cuts, punchy text, and a strong call-to-action. Perfect for TikTok, Reels & Shorts.',
   },
   {
     id: 'organic-story',
     name: 'Organic Story',
     icon: MessageCircle,
-    description: 'Authentic and engaging. Ideal for testimonials, vlogs, and building community.'
+    description:
+      'Authentic and engaging. Ideal for testimonials, vlogs, and building community.',
   },
   {
     id: 'cinematic-recap',
     name: 'Cinematic Recap',
     icon: Clapperboard,
-    description: 'Beautiful transitions, color grading, and emotional music. For travel, events, and family memories.'
+    description:
+      'Beautiful transitions, color grading, and emotional music. For travel, events, and family memories.',
   },
   {
     id: 'product-demo',
     name: 'Product Demo',
     icon: ShoppingCart,
-    description: 'Clear, concise, and focused on features. Designed to showcase your product in the best light.'
-  }
+    description:
+      'Clear, concise, and focused on features. Designed to showcase your product in the best light.',
+  },
 ];
 
-export default function StyleSelector({ isVisible, onStyleSelect }: StyleSelectorProps) {
+export default function StyleSelector({
+  isVisible,
+  onStyleSelect,
+}: StyleSelectorProps) {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
 
   const handleStyleClick = (styleId: string) => {
@@ -53,14 +65,14 @@ export default function StyleSelector({ isVisible, onStyleSelect }: StyleSelecto
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-bold text-white text-center">
-        Choose Your Video's Style
+        Choose Your Video&apos;s Style
       </h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {styles.map((style) => {
           const Icon = style.icon;
           const isSelected = selectedStyle === style.id;
-          
+
           return (
             <div
               key={style.id}
@@ -72,12 +84,14 @@ export default function StyleSelector({ isVisible, onStyleSelect }: StyleSelecto
               }`}
             >
               <div className="flex items-start space-x-4">
-                <div className={`p-3 rounded-lg ${
-                  isSelected ? 'bg-blue-500' : 'bg-gray-700'
-                }`}>
+                <div
+                  className={`p-3 rounded-lg ${
+                    isSelected ? 'bg-blue-500' : 'bg-gray-700'
+                  }`}
+                >
                   <Icon className="h-6 w-6 text-white" />
                 </div>
-                
+
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-white mb-2">
                     {style.name}
@@ -87,7 +101,7 @@ export default function StyleSelector({ isVisible, onStyleSelect }: StyleSelecto
                   </p>
                 </div>
               </div>
-              
+
               {isSelected && (
                 <div className="absolute top-2 right-2">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -97,7 +111,7 @@ export default function StyleSelector({ isVisible, onStyleSelect }: StyleSelecto
           );
         })}
       </div>
-      
+
       {selectedStyle && (
         <div className="text-center">
           <button

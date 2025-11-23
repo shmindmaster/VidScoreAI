@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
-import { Loader2, Play, Download, RefreshCw } from 'lucide-react';
+import { Download, Loader2, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface VideoGenerationProps {
   isVisible: boolean;
@@ -10,21 +10,29 @@ interface VideoGenerationProps {
 }
 
 const loadingMessages = [
-  "Analyzing footage for the best moments...",
-  "Structuring your story...",
-  "Applying your selected style...",
-  "Adding music and captions...",
-  "Finalizing your video..."
+  'Analyzing footage for the best moments...',
+  'Structuring your story...',
+  'Applying your selected style...',
+  'Adding music and captions...',
+  'Finalizing your video...',
 ];
 
 const styleVideoUrls: Record<string, string> = {
-  'high-impact': 'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4',
-  'organic-story': 'https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_25fps.mp4',
-  'cinematic-recap': 'https://videos.pexels.com/video-files/2169880/2169880-uhd_2560_1440_25fps.mp4',
-  'product-demo': 'https://videos.pexels.com/video-files/3195760/3195760-uhd_2560_1440_25fps.mp4'
+  'high-impact':
+    'https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4',
+  'organic-story':
+    'https://videos.pexels.com/video-files/3571264/3571264-uhd_2560_1440_25fps.mp4',
+  'cinematic-recap':
+    'https://videos.pexels.com/video-files/2169880/2169880-uhd_2560_1440_25fps.mp4',
+  'product-demo':
+    'https://videos.pexels.com/video-files/3195760/3195760-uhd_2560_1440_25fps.mp4',
 };
 
-export default function VideoGeneration({ isVisible, selectedStyle, onStartNew }: VideoGenerationProps) {
+export default function VideoGeneration({
+  isVisible,
+  selectedStyle,
+  onStartNew,
+}: VideoGenerationProps) {
   const [isGenerating, setIsGenerating] = useState(true);
   const [currentMessage, setCurrentMessage] = useState(0);
   const [videoReady, setVideoReady] = useState(false);
@@ -76,7 +84,7 @@ export default function VideoGeneration({ isVisible, selectedStyle, onStartNew }
               <Loader2 className="h-8 w-8 text-purple-400" />
             </div>
           </div>
-          
+
           <div className="space-y-4 max-w-md">
             <h2 className="text-2xl font-bold text-white">
               Generating Your Video
@@ -85,9 +93,13 @@ export default function VideoGeneration({ isVisible, selectedStyle, onStartNew }
               {loadingMessages[currentMessage]}
             </p>
             <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
+              <div
                 className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${((currentMessage + 1) / loadingMessages.length) * 100}%` }}
+                style={{
+                  width: `${
+                    ((currentMessage + 1) / loadingMessages.length) * 100
+                  }%`,
+                }}
               ></div>
             </div>
           </div>
@@ -104,7 +116,8 @@ export default function VideoGeneration({ isVisible, selectedStyle, onStartNew }
             Your Video is Ready!
           </h2>
           <p className="text-gray-400">
-            Here's your generated video with the "{selectedStyle.replace('-', ' ')}" style
+            Here&apos;s your generated video with the &quot;
+            {selectedStyle.replace('-', ' ')}&quot; style
           </p>
         </div>
 
@@ -131,7 +144,7 @@ export default function VideoGeneration({ isVisible, selectedStyle, onStartNew }
             <Download className="h-5 w-5" />
             <span>Download Video</span>
           </button>
-          
+
           <button
             onClick={onStartNew}
             className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"

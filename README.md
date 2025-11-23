@@ -1,7 +1,7 @@
 # VidScoreAI - AI-Powered Video Performance Analysis
 
-**Industry**: Marketing  
-**Domain**: https://vidscoreai.shtrial.com  
+**Industry**: Marketing
+**Domain**: https://vidscoreai.shtrial.com
 **Type**: Full-stack AI Application (Next.js with API routes)
 
 ## Overview
@@ -20,12 +20,12 @@ VidScoreAI is a platform for analyzing video performance and generating actionab
 - **Framework**: Next.js 15 (App Router), React 18, TypeScript
 - **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
 - **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
-  - Chat: `gpt-4o` (default), `gpt-5.1` (heavy tasks)
+  - Chat: `gpt-5.1` (default & heavy tasks)
   - Embeddings: `text-embedding-3-small`
   - Image: `gpt-image-1-mini`
 - **Search**: Azure AI Search (`shared-search-standard-eastus2`, index prefix: `vidscoreai`)
 - **Storage**: Azure Blob Storage (`stmahumsharedapps`, prefix: `vidscoreai/`)
-- **Deployment**: 
+- **Deployment**:
   - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
   - Backend: Next.js API routes within the same SWA (full-stack)
 - **Custom Domain**: `vidscoreai.shtrial.com`
@@ -52,7 +52,7 @@ See `docs/CONFIG.md` and `.env.example` for the complete schema. Key variables:
 # Azure OpenAI (Shared - via @shared/ai package)
 AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/openai/v1/
 AZURE_OPENAI_API_KEY=<your-key>
-AZURE_OPENAI_DEFAULT_CHAT_MODEL=gpt-4o
+AZURE_OPENAI_DEFAULT_CHAT_MODEL=gpt-5.1
 AZURE_OPENAI_MODEL_HEAVY=gpt-5.1
 AZURE_OPENAI_MODEL_EMBED=text-embedding-3-small
 AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
@@ -101,5 +101,3 @@ pnpm test             # Run Playwright tests
 
 - `docs/ARCHITECTURE.md` - Detailed architecture documentation
 - `docs/CONFIG.md` - Environment variables and configuration guide
-
-

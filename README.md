@@ -1,3 +1,11 @@
+# VidScoreAI
+
+## Data Storage Naming
+
+- PostgreSQL database: `vidscoreai_db`
+- Blob container: `vidscoreai`
+  Shared server/storage: `pg-shared-apps-eastus2` / `stmahumsharedapps`.
+
 # VidScoreAI - AI-Powered Video Performance Analysis
 
 **Industry**: Marketing
@@ -16,9 +24,17 @@
   - Image: `shacrapps.azurecr.io/vidscoreai-api:latest`
 - **Custom Domain**: `vidscoreai.shtrial.com`
 
+## Custom Domains
+
+- Frontend: `https://vidscoreai.shtrial.com`
+- Backend API: `https://api.vidscoreai.shtrial.com`
+- Swagger: `https://api.vidscoreai.shtrial.com/swagger`
+
+DNS Notes: Create CNAMEs to SWA and Container App; bind TLS.
+
 **Shared Resources** (all in shared resource groups):
 
-- **Database**: `pg-shared-apps-eastus2` (database: `VidScoreAI`) via Prisma
+- **Database**: `pg-shared-apps-eastus2` (database: `vidscoreai_db`) via Prisma
 - **Azure OpenAI**: `shared-openai-eastus2` (in `rg-shared-ai`)
 - **Azure AI Search**: `shared-search-standard-eastus2` (in `rg-shared-ai`) - only if using search/RAG
 - **Storage**: `stmahumsharedapps` (container: `vidscoreai`) in `rg-shared-data`
@@ -40,13 +56,13 @@ VidScoreAI is a platform for analyzing video performance and generating actionab
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router), React 18, TypeScript
-- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_dev`) via Prisma
+- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
 - **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
   - Chat: `gpt-5.1` (default & heavy tasks)
   - Embeddings: `text-embedding-3-small`
   - Image: `gpt-image-1-mini`
 - **Search**: Azure AI Search (`shared-search-standard-eastus2`, index: `vidscoreai-dev-index`) - only if using search/RAG
-- **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `VidScoreAI`) in `rg-shared-data`
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai`) in `rg-shared-data`
 - **Deployment**:
   - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
   - Backend: Container App `vidscoreai-api` in `cae-shared-apps` (Consumption plan)
@@ -80,7 +96,7 @@ AZURE_OPENAI_MODEL_EMBED=text-embedding-3-small
 AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
 
 # PostgreSQL (Shared - via @shared/data package)
-SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/VidScoreAI?sslmode=require
+SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
 
 # Azure AI Search (Shared - via @shared/data package)
 AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net
@@ -89,7 +105,7 @@ AZURE_SEARCH_INDEX_PREFIX=vidscoreai
 
 # Azure Storage (Shared - via @shared/data package)
 AZURE_STORAGE_CONNECTION_STRING=<connection-string>
-AZURE_STORAGE_CONTAINER=VidScoreAI
+AZURE_STORAGE_CONTAINER=vidscoreai
 ```
 
 ## Setup

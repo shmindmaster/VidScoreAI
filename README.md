@@ -1,51 +1,30 @@
-# VidScoreAI
-
-## Data Storage Naming
-
-- PostgreSQL database: `vidscoreai_db`
-- Blob container: `vidscoreai`
-  Shared server/storage: `pg-shared-apps-eastus2` / `stmahumsharedapps`.
-
 # VidScoreAI - AI-Powered Video Performance Analysis
 
-**Industry**: Marketing
-**Domain**: https://vidscoreai.shtrial.com
-**Type**: Full-stack AI Application (Next.js with API routes)
+[![Live Site](https://img.shields.io/badge/Live%20Site-vidscoreai.shtrial.com-blue)](https://vidscoreai.shtrial.com)
 
-## Deployment Architecture
-
-**Backend Platform**: ✅ **Azure Container Apps (Consumption)**
-
-- **Frontend**: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
-  - Next.js 15 App Router (React components, pages)
-- **Backend**: Azure Container App `vidscoreai-api` in `cae-shared-apps` (Consumption plan)
-  - Container Apps Environment: `cae-shared-apps` in `rg-shared-apps`
-  - Scales to zero, pay-per-use pricing
-  - Image: `shacrapps.azurecr.io/vidscoreai-api:latest`
-- **Custom Domain**: `vidscoreai.shtrial.com`
-
-## Custom Domains
-
-- **Frontend**: `https://vidscoreai.shtrial.com`
-- **Backend API**: `https://api.vidscoreai.shtrial.com`
-- **Swagger UI**: `https://api.vidscoreai.shtrial.com/swagger`
-- Swagger: `https://api.vidscoreai.shtrial.com/swagger`
-
-DNS Notes: Create CNAMEs to SWA and Container App; bind TLS.
-
-**Shared Resources** (all in shared resource groups):
-
-- **Database**: `pg-shared-apps-eastus2` (database: `vidscoreai_db`) via Prisma
-- **Azure OpenAI**: `shared-openai-eastus2` (in `rg-shared-ai`)
-- **Azure AI Search**: `shared-search-standard-eastus2` (in `rg-shared-ai`) - only if using search/RAG
-- **Storage**: `stmahumsharedapps` (container: `vidscoreai`) in `rg-shared-data`
-- **ACR**: `shacrapps` (shared container registry)
-
-**Cost**: ~$0-10/month (SWA Free tier + Container Apps Consumption with free grant)
+**Industry**: Marketing  
+**Domain**: https://vidscoreai.shtrial.com  
+**Type**: Frontend UX Demo (Backend AI Implementation Planned)
 
 ## Overview
 
-VidScoreAI is a platform for analyzing video performance and generating actionable insights. Currently a frontend UX demo with backend AI implementation planned.
+VidScoreAI is a platform for analyzing video performance and generating actionable insights. **Currently, it's a frontend-only UX prototype** that simulates video analysis and scoring. The backend AI implementation is planned for future development.
+
+### Current Status
+
+⚠️ **Frontend-Only Demo**: This is currently a UX prototype with:
+- Simulated video upload and analysis flow
+- Static performance scores and recommendations
+- No backend, database, or AI SDKs yet
+- All analysis is simulated in the browser
+
+### Why VidScoreAI?
+
+Traditional video analytics require manual review and lack AI-powered insights. VidScoreAI will use AI to:
+- **Analyze video content** automatically using computer vision and NLP
+- **Score performance** with automated metrics and benchmarks
+- **Generate insights** with AI-powered recommendations for optimization
+- **Compare videos** across time and variants for performance tracking
 
 ## Planned AI Features
 
@@ -109,36 +88,195 @@ AZURE_STORAGE_CONNECTION_STRING=<connection-string>
 AZURE_STORAGE_CONTAINER=vidscoreai
 ```
 
-## Setup
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- **Node.js**: >=20.0.0
+- **pnpm**: >=8.0.0 (`npm install -g pnpm`)
+- **Azure Account**: Access to shared Azure resources (for future backend implementation)
+
+## Installation
+
+### 1. Clone the Repository
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Set up environment
-cp .env.example .env.local
-# Edit .env.local with your Azure credentials
-
-# Development
-pnpm dev              # Start Next.js dev server
-pnpm build            # Build for production
-pnpm test             # Run Playwright tests
+git clone <repository-url>
+cd VidScoreAI
 ```
 
-## AI Roadmap
+### 2. Install Dependencies
 
-- 📋 **Planned**: Video analysis backend, performance scoring, insights generation
-- 🔄 **Future**: Real-time video processing, automated optimization recommendations
+```bash
+pnpm install
+```
+
+### 3. Configure Environment (Optional - for future backend)
+
+```bash
+# Copy example environment file
+cp .env.example .env.local
+
+# Edit .env.local with your Azure credentials (when backend is implemented)
+# See docs/CONFIG.md for detailed instructions
+```
+
+## Development
+
+### Project Structure
+
+```
+VidScoreAI/
+├── apps/
+│   └── frontend/          # Next.js 15 app (App Router)
+│       ├── app/
+│       │   ├── page.tsx   # Main marketing + upload + scoring flow
+│       │   ├── editor/    # Multi-file editor flow
+│       │   └── api/       # API routes (planned, not yet implemented)
+│       └── components/
+│           ├── video-uploader.tsx      # Drag-and-drop file picker
+│           ├── loading-analysis.tsx    # Simulated loading sequence
+│           └── performance-report.tsx   # Static scores + PDF export
+├── packages/
+│   ├── shared-ai/        # Shared Azure OpenAI client (planned)
+│   └── shared-data/      # Shared Prisma, Search, Storage clients (planned)
+└── e2e/                  # Playwright E2E tests
+```
+
+### Running the Application
+
+```bash
+# Start Next.js dev server (recommended)
+pnpm dev
+
+# The app will be available at http://localhost:3000
+```
+
+**Important**: Use `pnpm dev` for development - it enables hot-reload. Don't run `pnpm build` during interactive development.
+
+### Available Commands
+
+```bash
+# Development
+pnpm dev                  # Start Next.js dev server
+
+# Building
+pnpm build                # Build Next.js app
+pnpm start                # Start production server
+
+# Testing
+pnpm test                 # Run Playwright E2E tests
+pnpm test:ui              # Run tests with UI
+pnpm test:mobile         # Run mobile tests only
+pnpm test:desktop        # Run desktop tests only
+pnpm lint                 # Lint all code
+pnpm typecheck           # TypeScript type checking
+```
+
+### Current Behavior
+
+**Upload & Analysis Flow**:
+- `VideoUploader` collects a local `File` (no network calls)
+- `LoadingAnalysis` shows timed steps using `setInterval`/`setTimeout`
+- After ~5 seconds, shows `PerformanceReport` with static scores
+
+**Scoring & Recommendations**:
+- Uses hard-coded `overallScore` (e.g., 82)
+- Static list of sections with fixed scores
+- Suggestion text is static, not AI-generated
+- Generates PDF via `html2pdf.js` from rendered DOM
+
+**Editor Flow**:
+- `MultiFileUploader`, `StyleSelector`, `VideoGeneration` are pure client components
+- File upload and style selection are local-only
+- No backend job or Azure Media Services integration yet
+
+## Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+### Development Workflow
+
+1. **Create a branch**: `git checkout -b feature/your-feature-name`
+2. **Make changes**: Follow coding standards (see [`.github/copilot-instructions.md`](./.github/copilot-instructions.md))
+3. **Test your changes**: `pnpm lint && pnpm typecheck && pnpm test`
+4. **Commit**: Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
+5. **Push and create PR**: Target `main` branch
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled, no `any` types
+- **Next.js**: Use Server Components by default, Client Components only when needed
+- **Testing**: Add Playwright tests for new flows, maintain mobile-first approach
+- **Current State**: Remember this is frontend-only - don't assume backend features exist
+
+See [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) for detailed coding standards.
+
+### PR Guidelines
+
+- **Title**: `[VidScoreAI] Description` format
+- **Description**: Include what changed and why
+- **Tests**: All tests must pass (especially E2E tests)
+- **Type Safety**: No TypeScript errors
+- **Mobile Testing**: Test on mobile viewport (390x844px)
+
+## Future Backend Implementation
+
+When implementing the backend, follow these patterns:
+
+### API Routes
+
+- Add `app/api/*/route.ts` handlers (Next.js API routes)
+- Use `NextRequest`/`NextResponse` for request handling
+- Return structured JSON that existing UI can render
+
+### Azure OpenAI Integration
+
+- Use shared `shared-openai-eastus2` Azure OpenAI resource
+- Models: `gpt-5.1-mini` (analysis), `text-embedding-3-small` (embeddings), `gpt-image-1-mini` (vision)
+- All AI calls must be server-side (API routes only), never in React components
+
+### Video Storage
+
+- Use Azure Blob Storage for video uploads (SAS URLs)
+- Design background workflow for heavy processing (Container Apps jobs or Functions)
+- Store analysis results in database for comparison across time
+
+## Troubleshooting
+
+### Common Issues
+
+**Build Errors**:
+- Clear `.next` directory: `rm -rf .next`
+- Rebuild: `pnpm build`
+- Check for TypeScript errors: `pnpm typecheck`
+
+**Test Failures**:
+- Ensure mobile viewport tests are passing (390x844px)
+- Use role-based selectors (`getByRole`) when possible
+- Mock any future API endpoints in tests
+
+**For more help**: See `docs/CONFIG.md` or check `.github/copilot-instructions.md` for current implementation status
 
 ## Deployment
 
-- **Frontend**: Deployed to Azure Static Web App `vidscoreai` in `rg-shared-web` via GitHub Actions
-- **Backend**: Deployed to Container App `vidscoreai-api` in `cae-shared-apps` via GitHub Actions
-  - Builds Docker image and pushes to `shacrapps.azurecr.io`
-  - Updates Container App with new image
-- **CI/CD**: `.github/workflows/ci-cd.yml` - Automatically deploys on push to `main` branch
+- **Frontend**: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
+- **Backend**: Planned - Azure Container App `vidscoreai-api` in `cae-shared-apps` (when implemented)
+- **CI/CD**: `.github/workflows/ci-cd.yml` - auto-deploys on push to `main`
+- **Custom Domain**: `vidscoreai.shtrial.com`
 
 ## Documentation
 
-- `docs/ARCHITECTURE.md` - Detailed architecture documentation
-- `docs/CONFIG.md` - Environment variables and configuration guide
+- **AGENTS.md**: AI coding agent guide
+- **.github/copilot-instructions.md**: GitHub Copilot instructions (includes current implementation status)
+- **docs/ARCHITECTURE.md**: Detailed architecture documentation
+- **docs/CONFIG.md**: Environment variables and configuration guide
+
+## License
+
+[Add your license here]
+
+## Contact & Support
+
+- **Live Site**: https://vidscoreai.shtrial.com
+- **Issues**: [GitHub Issues](https://github.com/your-org/vidscoreai/issues)

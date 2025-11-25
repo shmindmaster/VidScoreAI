@@ -26,8 +26,9 @@
 
 ## Custom Domains
 
-- Frontend: `https://vidscoreai.shtrial.com`
-- Backend API: `https://api.vidscoreai.shtrial.com`
+- **Frontend**: `https://vidscoreai.shtrial.com`
+- **Backend API**: `https://api.vidscoreai.shtrial.com`
+- **Swagger UI**: `https://api.vidscoreai.shtrial.com/swagger`
 - Swagger: `https://api.vidscoreai.shtrial.com/swagger`
 
 DNS Notes: Create CNAMEs to SWA and Container App; bind TLS.

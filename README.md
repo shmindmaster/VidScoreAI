@@ -280,3 +280,36 @@ When implementing the backend, follow these patterns:
 
 - **Live Site**: https://vidscoreai.shtrial.com
 - **Issues**: [GitHub Issues](https://github.com/your-org/vidscoreai/issues)
+
+## ☁️ Infrastructure (MahumTech Shared Platform)
+
+VidScoreAI runs on the **MahumTech Shared Azure Platform**.
+
+- **Subscription:** `44e77ffe-2c39-4726-b6f0-2c733c7ffe78`
+- **Region:** East US 2
+- **App Slug:** `vidscoreai`
+
+### Shared Resource Groups (no new RGs allowed)
+
+| Resource Group | Purpose |
+| :--- | :--- |
+| `rg-shared-ai` | Azure OpenAI `shared-openai-eastus2`, AI Search `shared-search-standard-eastus2` |
+| `rg-shared-data` | PostgreSQL `pg-shared-apps-eastus2`, Storage `stmahumsharedapps` |
+| `rg-shared-container-apps` | Container Apps environments, ACR `acrsharedapps` |
+| `rg-shared-web` | Static Web Apps |
+| `rg-shared-logs` | Log Analytics `law-shared-apps-eastus2`, App Insights `appi-shared-apps-eastus2` |
+| `rg-shared-dns` | DNS zones, certificates |
+
+App-specific resources (all on shared services):
+
+| Resource | Name | Service |
+| :--- | :--- | :--- |
+| Database | `vidscoreai_db` | `pg-shared-apps-eastus2` |
+| Blob Container | `vidscoreai` | `stmahumsharedapps` |
+| Search Index | `idx-vidscoreai-primary` | `shared-search-standard-eastus2` |
+| Static Web App | `vidscoreai` | `rg-shared-web` |
+| Container App | `ca-vidscoreai-api` | `rg-shared-container-apps` |
+
+> **⚠️ Important:** Contributors and AI agents must **not** create new resource groups, PostgreSQL servers, storage accounts, or OpenAI/Search accounts. Extend the shared platform instead.
+
+See [`AGENTS.md`](./AGENTS.md) for detailed agent contract and [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) for Copilot rules.

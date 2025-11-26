@@ -43,7 +43,7 @@ You are authorized to manage **only** these specific child resources for `vidsco
 
 | Resource Type | Name | Location |
 | :--- | :--- | :--- |
-| **Database** | `vidscoreai_db` | `pg-shared-apps-eastus2` |
+| **Database** | `vidscoreai` | `pg-shared-apps-eastus2` |
 | **Blob Container** | `vidscoreai` | `stmahumsharedapps` |
 | **Search Index** | `idx-vidscoreai-primary` | `shared-search-standard-eastus2` |
 | **Static Web App** | `vidscoreai` | `rg-shared-web` |
@@ -119,7 +119,7 @@ Required environment variables for local development (`.env.local`):
 
 ```bash
 # Database (Shared PostgreSQL)
-DATABASE_URL=postgresql://pgadmin:***@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
+DATABASE_URL=postgresql://pgadmin:***@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai?sslmode=require
 
 # Azure OpenAI
 AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/

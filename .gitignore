@@ -111,3 +111,8 @@ logs/
 # GitHub Copilot instructions - keep in sync
 # ====================
 !.github/instructions/
+
+# Environment files
+.env
+.env.local
+.env.*.local

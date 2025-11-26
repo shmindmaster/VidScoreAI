@@ -1,154 +1,155 @@
-# VidScoreAI - Agent Development Guide
+# Agent Profile – VidScoreAI
 
-## Project Overview
+**Contract:** MahumTech Shared Azure Platform (`#azure-mcp`)
+**App Slug:** `vidscoreai`
 
-**Application**: AI-Powered Video Performance Analysis  
-**URL**: https://vidscoreai.shtrial.com  
-**Stack**: Next.js 15 (App Router) + React 18 + TypeScript + Azure AI Services  
-**Monorepo**: Yes (apps/frontend, packages/*)
+You are an AI coding agent working on the **VidScoreAI** application - AI Video Analysis Platform.
+This project adheres to a strict **Shared Azure Platform Contract**.
 
-## Architecture Overview (VidScoreAI)
+---
 
-VidScoreAI is a **Next.js 15 full-stack application** for AI-powered video scoring and marketing analytics.
+## 🛑 HARD RULES (Violations will be rejected)
 
-## Project Structure
+1. **NO NEW RESOURCE GROUPS:** You are strictly **forbidden** from creating new Azure Resource Groups.
+2. **NO NEW SERVERS:** Do not create PostgreSQL Servers, Storage Accounts, OpenAI accounts, or AI Search Services.
+3. **SHARED ONLY:** You must deploy resources *into* the existing shared infrastructure listed below.
+4. **NO `az group create`:** If you generate Bicep/Terraform/CLI that calls `az group create`, **you are wrong**. Fix it.
 
-```
-VidScoreAI/
-├── apps/
-│   └── frontend/          # Next.js 15 full-stack application (App Router)
-├── packages/
-│   ├── shared-ai/         # Shared Azure OpenAI client (@shared/ai)
-│   └── shared-data/       # Shared Postgres, Search, Storage clients (@shared/data)
-```
+---
 
-## Tech Stack
+## 🏗️ Infrastructure Architecture
 
-- **Framework**: Next.js 15 (App Router), React 18, TypeScript
-- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
-- **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
-  - Chat: `gpt-4o` (default), `gpt-5.1` (heavy tasks)
-  - Embeddings: `text-embedding-3-small`
-  - Image: `gpt-image-1-mini`
-- **Search**: Azure AI Search (`shared-search-standard-eastus2`, index prefix: `vidscoreai`)
-- **Storage**: Azure Blob Storage (`stmahumsharedapps`, prefix: `vidscoreai/`)
-- **Deployment**: 
-  - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
-  - Backend: Next.js API routes within the same SWA (full-stack)
-- **Custom Domain**: `vidscoreai.shtrial.com`
+### 1. The Shared Platform (Read-Only)
 
-## Build & Test Commands
+You will use these existing resources for all deployments:
 
-All commands are executable and tested. Copy-paste ready:
+| Service | Resource Group | Resource Name |
+| :--- | :--- | :--- |
+| **AI / LLM (OpenAI)** | `rg-shared-ai` | `shared-openai-eastus2` |
+| **AI Search** | `rg-shared-ai` | `shared-search-standard-eastus2` |
+| **PostgreSQL Host** | `rg-shared-data` | `pg-shared-apps-eastus2` |
+| **Blob Storage** | `rg-shared-data` | `stmahumsharedapps` |
+| **Container Registry** | `rg-shared-container-apps` | `acrsharedapps` |
+| **Container Apps Env (Dev)** | `rg-shared-container-apps` | `cae-shared-apps-dev` |
+| **Container Apps Env (Prod)** | `rg-shared-container-apps` | `cae-shared-apps-prod` |
+| **Log Analytics** | `rg-shared-logs` | `law-shared-apps-eastus2` |
+| **Application Insights** | `rg-shared-logs` | `appi-shared-apps-eastus2` |
+| **Static Web Apps** | `rg-shared-web` | (per-app SWAs) |
+| **DNS / Certificates** | `rg-shared-dns` | (shared DNS zones) |
+
+### 2. App-Specific Resources (Owned by this Repo)
+
+You are authorized to manage **only** these specific child resources for `vidscoreai`:
+
+| Resource Type | Name | Location |
+| :--- | :--- | :--- |
+| **Database** | `vidscoreai_db` | `pg-shared-apps-eastus2` |
+| **Blob Container** | `vidscoreai` | `stmahumsharedapps` |
+| **Search Index** | `idx-vidscoreai-primary` | `shared-search-standard-eastus2` |
+| **Static Web App** | `vidscoreai` | `rg-shared-web` |
+| **Container App (API)** | `ca-vidscoreai-api` | `rg-shared-container-apps` |
+| **Container Images** | `acrsharedapps.azurecr.io/vidscoreai-api:*` | `acrsharedapps` |
+
+### 3. Resource Groups Reference
+
+| Resource Group | Purpose | Create Resources Here? |
+| :--- | :--- | :--- |
+| `rg-shared-ai` | Azure OpenAI, AI Search | ❌ No - use existing |
+| `rg-shared-data` | PostgreSQL, Storage | ❌ No - use existing |
+| `rg-shared-container-apps` | ACR, Container Apps | ✅ Container Apps only |
+| `rg-shared-web` | Static Web Apps | ✅ SWAs only |
+| `rg-shared-logs` | Monitoring | ❌ No - use existing |
+| `rg-shared-dns` | DNS, Certs | ❌ No - use existing |
+| `rg-shared-backup` | Backups | ❌ No - use existing |
+
+---
+
+## 💻 Project Overview
+
+**Application**: AI Video Analysis Platform
+**URL**: https://vidscoreai.shtrial.com
+**Stack**: Next.js + Azure AI Services
+
+---
+
+## 🔧 Build & Test Commands
 
 ```bash
-# Install dependencies (run from repo root)
+# Install dependencies
 pnpm install
 
-# Development (Next.js dev server)
-pnpm dev              # Starts on http://localhost:3000
+# Run development server
+pnpm dev
 
-# Build (production build)
-pnpm build            # Build Next.js app
-pnpm lint             # ESLint
-pnpm typecheck        # TypeScript type checking
+# Build for production
+pnpm build
 
-# Testing
-pnpm test             # Unit tests
-pnpm test:e2e         # Playwright E2E tests
+# Run tests
+pnpm test
+
+# Lint and format
+pnpm lint
 ```
 
-**Before committing**: Always run `pnpm lint && pnpm typecheck && pnpm test`
+---
 
-## Coding Conventions
+## 🚀 Deployment Commands
 
-### Next.js App Router
-
-**Good Examples** (refer to these files):
-- Pages: `apps/frontend/app/**/page.tsx`
-- API Routes: `apps/frontend/app/api/**/route.ts`
-- Components: `apps/frontend/components/**/*.tsx`
-
-**Patterns**:
-- Use Server Components by default (add `'use client'` only when needed)
-- API routes in `app/api/` directory
-- Use Prisma for database access via `@shared/data` package
-- Use Azure OpenAI via `@shared/ai` package
-
-**Bad Examples** (avoid):
-- ❌ Client components when server components would work
-- ❌ Direct database queries (use Prisma)
-- ❌ Hardcoded API endpoints
-
-## Environment Variables
-
-**No Key Vault**: All secrets/config via App Settings and environment variables.
-
-**No OpenAI.com**: Only Azure OpenAI endpoint (`shared-openai-eastus2`).
-
-See `.env.example` for complete schema. Key variables:
-
-```env
-# Azure OpenAI (via @shared/ai package)
-AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/openai/v1/
-AZURE_OPENAI_API_KEY=<your-key>
-AZURE_OPENAI_DEFAULT_CHAT_MODEL=gpt-4o
-AZURE_OPENAI_MODEL_HEAVY=gpt-5.1
-AZURE_OPENAI_MODEL_EMBED=text-embedding-3-small
-
-# PostgreSQL (via Prisma)
-DATABASE_URL=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
-
-# Azure AI Search (via @shared/data package)
-AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net
-AZURE_SEARCH_API_KEY=<your-key>
-AZURE_SEARCH_INDEX_PREFIX=vidscoreai
-
-# Azure Storage (via @shared/data package)
-AZURE_STORAGE_CONNECTION_STRING=<connection-string>
-AZURE_STORAGE_CONTAINER=vidscoreai
-```
-
-## Testing Requirements
-
-**Before every commit**:
 ```bash
-pnpm lint && pnpm typecheck && pnpm test
+# Build and push API image
+docker build -t acrsharedapps.azurecr.io/vidscoreai-api:latest -f apps/backend/Dockerfile .
+az acr login --name acrsharedapps
+docker push acrsharedapps.azurecr.io/vidscoreai-api:latest
+
+# Deploy to Container Apps
+az containerapp update \
+  --name ca-vidscoreai-api \
+  --resource-group rg-shared-container-apps \
+  --image acrsharedapps.azurecr.io/vidscoreai-api:latest
+
+# Deploy Static Web App (handled by GitHub Actions)
+# Push to main branch triggers deployment
 ```
 
-**Test Coverage**:
-- Add unit tests for new utilities and components
-- Add integration tests for API routes
-- E2E tests for critical user flows
+---
 
-## PR Guidelines
+## 📋 Environment Variables
 
-- Title: `[VidScoreAI] Description`
-- All tests passing
-- No TypeScript errors
-- Video analysis features tested (when implemented)
+Required environment variables for local development (`.env.local`):
 
-## Prohibited Patterns
+```bash
+# Database (Shared PostgreSQL)
+DATABASE_URL=postgresql://pgadmin:***@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
 
-❌ **Never**:
+# Azure OpenAI
+AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/
+AZURE_OPENAI_API_KEY=***
+AZURE_OPENAI_API_VERSION=2025-01-01-preview
+AZURE_OPENAI_DEPLOYMENT_CHAT=gpt-4o
+AZURE_OPENAI_DEPLOYMENT_EMBEDDING=text-embedding-3-small
 
-- Use non-Azure AI providers as primary
-- Use OpenAI.com API (only Azure OpenAI)
-- Hardcode API keys or credentials
-- Bypass input validation
-- Use client components when server components work
+# Azure AI Search
+AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net/
+AZURE_SEARCH_API_KEY=***
+AZURE_SEARCH_INDEX=idx-vidscoreai-primary
 
-## Deployment
+# Azure Blob Storage
+AZURE_STORAGE_CONNECTION_STRING=***
+AZURE_STORAGE_CONTAINER=vidscoreai
 
-- **Frontend**: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
-- **Backend**: Next.js API routes within the same SWA (full-stack)
-- **CI/CD**: `.github/workflows/ci-cd.yml` - Auto-deploys on push to `main`
-- **Custom Domain**: `vidscoreai.shtrial.com`
+# Application Insights
+APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=***
+APP_NAME=vidscoreai
+```
 
-## Resources
+---
 
-- [Next.js Docs](https://nextjs.org/docs)
-- [Azure OpenAI Docs](https://learn.microsoft.com/en-us/azure/ai-services/openai/)
-- [Prisma Docs](https://www.prisma.io/docs/)
-- `docs/ARCHITECTURE.md` - Detailed architecture documentation
-- `docs/CONFIG.md` - Environment variables and configuration guide
+## 🚫 Boundaries
+
+- **Do the hard work**: Search this repo for existing Bicep/ARM/Terraform and reuse patterns.
+- **Don't take shortcuts**: No isolated "demo" RGs, single-tenant servers, or one-off configs.
+- **Never touch** `.github/workflows` secrets layout without explicit permission.
+- **Focus on code**: Write clean, minimal code that fits the shared platform instead of reinventing infra.
+
+If you think a new resource is required, **FIRST** check if the shared platform already provides it.
+Extend existing shared resources (new DB, new container, new index), do NOT provision new servers or accounts.

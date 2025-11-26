@@ -1,1 +1,5 @@
-!.env*
+# Unblock all env files
+
+!.env
+
+!.env.*

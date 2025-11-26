@@ -48,6 +48,23 @@ Traditional video analytics require manual review and lack AI-powered insights. 
   - Backend: Container App `vidscoreai-api` in `cae-shared-apps` (Consumption plan)
 - **Custom Domain**: `vidscoreai.shtrial.com`
 
+## Demo URLs
+
+- **Frontend**: https://vidscoreai.shtrial.com
+- **API Base URL**: https://api.vidscoreai.shtrial.com
+- **API Docs**: https://api.vidscoreai.shtrial.com/docs
+
+## End-to-end Testing
+
+This project uses Playwright for E2E tests.
+
+```bash
+pnpm install
+pnpm test:e2e
+```
+
+The `pretest:e2e` hook automatically runs `pnpm exec playwright install` to ensure browsers are installed before tests run.
+
 ## Architecture
 
 - **Monorepo**: pnpm workspaces with Turborepo

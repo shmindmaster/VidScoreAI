@@ -17,6 +17,8 @@ node_modules/
 .pnp.js
 .yarn/
 .pnpm-store/
+.npm/
+.cache/
 # pnpm lockfile should be committed, but ignore others
 package-lock.json
 yarn.lock
@@ -50,6 +52,7 @@ coverage/
 .nyc_output/
 test-results/
 playwright-report/
+blob-report/
 test-artifacts/
 playwright/.cache/
 
@@ -57,6 +60,7 @@ playwright/.cache/
 # Environment & Secret Files
 # ====================
 .env*
+!.env.example
 *.pem
 
 # Azure credentials - DO NOT COMMIT
@@ -87,6 +91,8 @@ storage-credentials.json
 # ====================
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # ====================
 # Debug Logs

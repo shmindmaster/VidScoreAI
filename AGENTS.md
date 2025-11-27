@@ -45,7 +45,7 @@ You are authorized to manage **only** these specific child resources for `vidsco
 | :--- | :--- | :--- |
 | **Database** | `vidscoreai` | `pg-shared-apps-eastus2` |
 | **Blob Container** | `vidscoreai` | `stmahumsharedapps` |
-| **Search Index** | `idx-vidscoreai-primary` | `shared-search-standard-eastus2` |
+| **Search / RAG** | (planned) Postgres + pgvector in `vidscoreai_db` | `pg-shared-apps-eastus2` |
 | **Static Web App** | `vidscoreai` | `rg-shared-web` |
 | **Container App (API)** | `ca-vidscoreai-api` | `rg-shared-container-apps` |
 | **Container Images** | `acrsharedapps.azurecr.io/vidscoreai-api:*` | `acrsharedapps` |
@@ -103,7 +103,8 @@ You are authorized to manage **only** these specific child resources for `vidsco
 - Reuse the shared resource groups (for example: rg-shared-ai, rg-shared-data, rg-shared-apps, rg-shared-web, rg-shared-logs).
 - For databases, use the shared Postgres server (e.g. pg-shared-apps-eastus2) and create or use a database named after this app's slug ("vidscoreai").
 - For storage, reuse the shared storage account and create/reuse containers named after this app's slug.
-- For AI and search, use shared Azure OpenAI and Azure Search endpoints defined in the environment (do not hard-code secrets in source).
+- For AI, use shared Azure OpenAI endpoints defined in the environment (do not hard-code secrets in source).
+- For any future search/RAG implementation, use Postgres + pgvector on the shared Postgres host instead of Azure AI Search.
 
 ---
 
@@ -162,11 +163,6 @@ AZURE_OPENAI_API_KEY=***
 AZURE_OPENAI_API_VERSION=2025-01-01-preview
 AZURE_OPENAI_DEPLOYMENT_CHAT=gpt-4o
 AZURE_OPENAI_DEPLOYMENT_EMBEDDING=text-embedding-3-small
-
-# Azure AI Search
-AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net/
-AZURE_SEARCH_API_KEY=***
-AZURE_SEARCH_INDEX=idx-vidscoreai-primary
 
 # Azure Blob Storage
 AZURE_STORAGE_CONNECTION_STRING=***

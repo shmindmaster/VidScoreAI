@@ -36,7 +36,9 @@ All resources are deployed to shared resource groups in the MahumTech subscripti
     - Deployments: `gpt-4o`, `gpt-5.1`, `text-embedding-3-small`, `gpt-image-1-mini`
   - Azure AI Search: `shared-search-standard-eastus2`
     - Endpoint: `https://shared-search-standard-eastus2.search.windows.net`
-    - Index prefix: `vidscoreai` (e.g., `vidscoreai-videos`)
+    - Note: VidScoreAI currently does not use Azure AI Search. Any future
+      search/RAG implementation should use Postgres + pgvector on the shared
+      Postgres host instead of Azure Search indexes.
 
 - **`rg-shared-data`**: Data services
   - PostgreSQL: `pg-shared-apps-eastus2`

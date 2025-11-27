@@ -25,14 +25,6 @@ AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
 SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
 ```
 
-### Azure AI Search (Shared)
-
-```bash
-AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net
-AZURE_SEARCH_API_KEY=<search-key>
-AZURE_SEARCH_INDEX_PREFIX=vidscoreai
-```
-
 ### Azure Storage (Shared)
 
 ```bash
@@ -58,8 +50,8 @@ NEXT_PUBLIC_APP_NAME=VidScoreAI
 
 ### Search Indexes
 
-- **Index prefix**: `vidscoreai`
-- **Example indexes**: `vidscoreai-videos`, `vidscoreai-analytics`
+- **Planned search**: Future backend search/RAG should use Postgres + pgvector
+  on the shared Postgres database instead of Azure AI Search indexes.
 
 ### Storage Prefixes
 

@@ -41,7 +41,7 @@ Traditional video analytics require manual review and lack AI-powered insights. 
   - Chat: `gpt-5.1` (default & heavy tasks)
   - Embeddings: `text-embedding-3-small`
   - Image: `gpt-image-1-mini`
-- **Search**: Azure AI Search (`shared-search-standard-eastus2`, index: `vidscoreai-dev-index`) - only if using search/RAG
+- **Search**: Planned – future backend search/RAG should use Postgres + pgvector on the shared Postgres database instead of Azure AI Search indexes
 - **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai`) in `rg-shared-data`
 - **Deployment**:
   - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
@@ -72,7 +72,7 @@ The `pretest:e2e` hook automatically runs `pnpm exec playwright install` to ensu
   - `apps/frontend`: Next.js 15 full-stack application (App Router)
 - **Packages**:
   - `packages/shared-ai`: Shared Azure OpenAI client (`@shared/ai`)
-  - `packages/shared-data`: Shared Postgres, Search, Storage clients (`@shared/data`)
+  - `packages/shared-data`: Shared Prisma, Search, Storage clients (`@shared/data`)
 - **API Routes**: Next.js App Router API routes within the frontend app
 
 ## Environment Variables
@@ -94,11 +94,6 @@ AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
 
 # PostgreSQL (Shared - via @shared/data package)
 SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
-
-# Azure AI Search (Shared - via @shared/data package)
-AZURE_SEARCH_ENDPOINT=https://shared-search-standard-eastus2.search.windows.net
-AZURE_SEARCH_API_KEY=<your-key>
-AZURE_SEARCH_INDEX_PREFIX=vidscoreai
 
 # Azure Storage (Shared - via @shared/data package)
 AZURE_STORAGE_CONNECTION_STRING=<connection-string>
@@ -323,7 +318,7 @@ App-specific resources (all on shared services):
 | :--- | :--- | :--- |
 | Database | `vidscoreai_db` | `pg-shared-apps-eastus2` |
 | Blob Container | `vidscoreai` | `stmahumsharedapps` |
-| Search Index | `idx-vidscoreai-primary` | `shared-search-standard-eastus2` |
+| Search / RAG (planned) | Postgres + pgvector in `vidscoreai_db` | `pg-shared-apps-eastus2` |
 | Static Web App | `vidscoreai` | `rg-shared-web` |
 | Container App | `ca-vidscoreai-api` | `rg-shared-container-apps` |
 

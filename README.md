@@ -37,8 +37,8 @@ Traditional video analytics require manual review and lack AI-powered insights. 
 
 - **Framework**: Next.js 15 (App Router), React 18, TypeScript
 - **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
-- **AI**: Azure OpenAI exclusively (via `@shared/ai` package)
-  - Chat: `gpt-5.1` (default & heavy tasks)
+- **AI**: Azure OpenAI Responses API (v1 GA) exclusively (via `@shared/ai` package)
+  - Chat/Code: `gpt-5.1-codex-mini` (via Responses API for default & heavy tasks)
   - Embeddings: `text-embedding-3-small`
   - Image: `gpt-image-1-mini`
 - **Search**: Planned – future backend search/RAG should use Postgres + pgvector on the shared Postgres database instead of Azure AI Search indexes
@@ -84,13 +84,16 @@ The `pretest:e2e` hook automatically runs `pnpm exec playwright install` to ensu
 See `docs/CONFIG.md` and `.env.example` for the complete schema. Key variables:
 
 ```env
-# Azure OpenAI (Shared - via @shared/ai package)
-AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.openai.azure.com/openai/v1/
+# Azure OpenAI Responses API (v1 GA)
+AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.cognitiveservices.azure.com/
 AZURE_OPENAI_API_KEY=<your-key>
-AZURE_OPENAI_DEFAULT_CHAT_MODEL=gpt-5.1
-AZURE_OPENAI_MODEL_HEAVY=gpt-5.1
-AZURE_OPENAI_MODEL_EMBED=text-embedding-3-small
-AZURE_OPENAI_MODEL_IMAGE=gpt-image-1-mini
+AZURE_OPENAI_RESPONSES_URL=https://shared-openai-eastus2.cognitiveservices.azure.com/openai/v1/responses
+AZURE_OPENAI_EMBEDDING_ENDPOINT=https://shared-openai-eastus2.cognitiveservices.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15
+
+# Model Configuration
+AI_MODEL_GENERAL=gpt-5.1-codex-mini
+AI_MODEL_EMBEDDING=text-embedding-3-small
+AI_MODEL_IMAGE=gpt-image-1-mini
 
 # PostgreSQL (Shared - via @shared/data package)
 SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require

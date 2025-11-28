@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
 import { Download, Play, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -16,10 +17,82 @@ interface ScoreSection {
   suggestions: string[];
 }
 
+interface RagResult {
+  id: string;
+  title: string;
+  content: string;
+  metadata: Record<string, unknown>;
+  score: number;
+}
+
 export default function PerformanceReport({ isVisible, videoFile }: PerformanceReportProps) {
   const [isDownloading, setIsDownloading] = useState(false);
-  
+  const [ragResults, setRagResults] = useState<RagResult[] | null>(null);
+  const [ragLoading, setRagLoading] = useState(false);
+  const [ragError, setRagError] = useState<string | null>(null);
+
+  const apiBaseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let cancelled = false;
+
+    async function fetchRagInsights() {
+      setRagLoading(true);
+      setRagError(null);
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/api/rag/search`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query:
+              'best practices for video advertising performance, hooks, pacing, CTAs, and visual overlays',
+            limit: 4,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const json = await response.json();
+
+        if (!json?.success) {
+          throw new Error(json?.error || 'RAG search failed');
+        }
+
+        const results = (json.data?.results || []) as RagResult[];
+
+        if (!cancelled) {
+          setRagResults(results);
+        }
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('RAG fetch error', error);
+        if (!cancelled) {
+          setRagError('Unable to fetch additional AI insights right now.');
+        }
+      } finally {
+        if (!cancelled) {
+          setRagLoading(false);
+        }
+      }
+    }
+
+    void fetchRagInsights();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [apiBaseUrl, isVisible]);
+
   const overallScore = 82;
+
   const sections: ScoreSection[] = [
     {
       title: "Hook Strength",
@@ -187,6 +260,46 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
               );
             })}
           </div>
+
+          {ragLoading && (
+            <div className="mt-8 text-sm text-gray-400">
+              Fetching additional AI insights...
+            </div>
+          )}
+
+          {ragError && !ragLoading && (
+            <div className="mt-8 text-sm text-red-400">{ragError}</div>
+          )}
+
+          {!ragLoading && !ragError && ragResults && ragResults.length > 0 && (
+            <div className="mt-10 border-t border-gray-800 pt-6">
+              <h3 className="text-xl font-semibold text-white mb-4">
+                AI Knowledge Base Insights
+              </h3>
+              <div className="space-y-4">
+                {ragResults.map((result) => (
+                  <div
+                    key={result.id}
+                    className="bg-gray-800/50 rounded-lg p-4 border border-gray-700"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-white">
+                        {result.title}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        Relevance: {Math.round(result.score * 100)}%
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-300">
+                      {result.content.length > 260
+                        ? `${result.content.slice(0, 260)}...`
+                        : result.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

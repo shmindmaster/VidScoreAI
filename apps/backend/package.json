@@ -1,25 +1,22 @@
 {
-  "name": "backend",
-  "version": "0.1.0",
+  "name": "@vidscoreai/api",
+  "version": "0.0.1",
   "private": true,
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
-    "seed:rag": "ts-node-dev --transpile-only src/seedRag.ts"
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "ts-node src/main.ts"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "zod": "^3.25.6",
-    "pg": "^8.12.0"
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/platform-express": "^11.1.9",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.0.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.6.0"
+    "@types/node": "^24.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }

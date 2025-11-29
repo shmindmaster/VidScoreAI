@@ -21,7 +21,7 @@
     "validate:responses-api": "tsx scripts/validate-responses-api.ts"
   },
   "devDependencies": {
-    "@playwright/test": "latest",
-    "tsx": "^4.19.2"
+    "@playwright/test": "^1.57.0",
+    "tsx": "^4.20.6"
   }
 }

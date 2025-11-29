@@ -1,24 +1,16 @@
-# VidScoreAI API - Container App image
-FROM node:20-bullseye
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Enable corepack and pnpm
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+COPY package.json ./
+RUN npm install
 
-# Copy workspace manifests
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps/backend/package.json apps/backend/package.json
+COPY src ./src
+COPY tsconfig.json ./
 
-# Install dependencies for the monorepo
-RUN pnpm install --frozen-lockfile
+RUN npm run build
 
-# Copy full workspace
-COPY . .
+EXPOSE 3000
+ENV PORT=3000
 
-# Build backend
-RUN pnpm --filter backend build
-
-EXPOSE 3001
-
-CMD ["pnpm", "--filter", "backend", "start"]
+CMD ["node", "dist/main.js"]

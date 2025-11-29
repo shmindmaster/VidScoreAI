@@ -63,6 +63,41 @@ This repo uses shared Azure infrastructure and the **Azure OpenAI Responses API*
 * **OpenAI:** `shared-openai-eastus2`
 * **DNS:** `vidscoreai.shtrial.com` (frontend), `api.vidscoreai.shtrial.com` (backend)
 * **Registry:** `acrsharedapps`
+* **Static Web App:** `blue-field-05d4e8a0f`
+
+**Note:** VidScoreAI is frontend-only (no Container App backend).
+
+## 💰 Cost Control Rules (MANDATORY)
+
+If a Container App is added in the future, it MUST use these cost-optimized settings:
+
+| Setting | Required Value | Reason |
+|---------|----------------|--------|
+| minReplicas | **0** | Scale-to-zero when idle |
+| maxReplicas | **3** | Prevent runaway scaling |
+| CPU | **0.25** | Sufficient for API workloads |
+| Memory | **0.5Gi** | Sufficient for API workloads |
+
+**Environment Variable Naming:**
+- Use `AI_MODEL_CORE` (not `AI_MODEL_GENERAL`)
+- Use `DATABASE_URL` for connection strings
+
+**Cost Violations to Avoid:**
+- ❌ minReplicas > 0 (wastes money when idle)
+- ❌ maxReplicas > 3 (risk of runaway costs)
+- ❌ CPU > 0.25 or Memory > 0.5Gi without approval
+- ❌ Creating new Azure resources without approval
+
+## 🚀 Deployment Procedures
+
+### Static Web App Deployment
+```bash
+# Build frontend
+cd apps/frontend && pnpm build
+
+# Deploy using SWA CLI
+swa deploy ./dist --deployment-token $SWA_DEPLOYMENT_TOKEN
+```
 
 ## 📁 Repository Organization
 

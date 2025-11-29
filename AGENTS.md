@@ -63,3 +63,24 @@ This repo uses shared Azure infrastructure and the **Azure OpenAI Responses API*
 * **OpenAI:** `shared-openai-eastus2`
 * **DNS:** `vidscoreai.shtrial.com` (frontend), `api.vidscoreai.shtrial.com` (backend)
 * **Registry:** `acrsharedapps`
+
+## 📁 Repository Organization
+
+### Approved Folder Structure
+- **Frontend:** `apps/frontend/src/` (React application)
+- **Backend:** `apps/backend/src/` (Backend application)
+- **Infrastructure:** `infra/` (if applicable)
+- **Documentation:** `docs/` (single source of truth)
+- **Scripts:** `scripts/` (deployment, validation, utilities)
+- **Tests:** `tests/` (E2E tests)
+
+### File Placement Rules
+- **New components:** Place in appropriate frontend structure
+- **API routes:** Add to appropriate module under `apps/backend/src/`
+- **Documentation:** Update existing files in `docs/`, never create parallel docs
+
+### Documentation Standards
+- **Single Source of Truth:** Each topic has one definitive document
+- **No Temporary Files:** Delete process docs, summaries, and outdated files (don't archive)
+- **Reference, Don't Duplicate:** Link to information instead of copying
+- **No Turborepo:** Use simple pnpm workspace scripts instead of Turborepo

@@ -3,16 +3,25 @@
   "private": true,
   "packageManager": "pnpm@9.0.0",
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "test": "turbo test",
+    "dev": "pnpm --filter frontend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build": "pnpm --filter frontend build && pnpm --filter backend build",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "test": "pnpm --filter frontend test && pnpm --filter backend test",
+    "test:frontend": "pnpm --filter frontend test",
+    "test:backend": "pnpm --filter backend test",
     "pretest:e2e": "pnpm exec playwright install",
     "test:e2e": "playwright test",
     "test:all": "pnpm test && pnpm test:e2e",
-    "lint": "turbo lint"
+    "lint": "pnpm --filter frontend lint && pnpm --filter backend lint",
+    "lint:frontend": "pnpm --filter frontend lint",
+    "lint:backend": "pnpm --filter backend lint",
+    "validate:responses-api": "tsx scripts/validate-responses-api.ts"
   },
   "devDependencies": {
     "@playwright/test": "latest",
-    "turbo": "^2.0.0"
+    "tsx": "^4.19.2"
   }
 }

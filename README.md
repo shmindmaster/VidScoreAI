@@ -65,6 +65,16 @@ pnpm test:e2e
 
 The `pretest:e2e` hook automatically runs `pnpm exec playwright install` to ensure browsers are installed before tests run.
 
+## Azure OpenAI Validation
+
+Validate Responses API configuration:
+
+```bash
+pnpm validate:responses-api
+```
+
+This checks environment variables, endpoint format, and API connectivity.
+
 ## Architecture
 
 - **Monorepo**: pnpm workspaces with Turborepo

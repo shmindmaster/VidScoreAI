@@ -1,16 +1,17 @@
-const path = require('path');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: { unoptimized: true },
+  // Turbopack config required for Next.js 16 when webpack config is present
+  turbopack: {
+    resolveAlias: {
+      '@/*': ['./*'],
+    },
+  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': path.resolve(__dirname),
+      '@': require('path').resolve(__dirname),
     };
     return config;
   },

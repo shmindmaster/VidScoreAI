@@ -14,10 +14,17 @@ async function bootstrap() {
     .addTag('videos')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
+  
+  // Expose OpenAPI JSON at /openapi.json (dynamically generated)
+  app.getHttpAdapter().getInstance().get('/openapi.json', (_req, res) => {
+    res.json(document);
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`VidScoreAI Backend running on port ${port}`);
+  console.log(`API Documentation: http://localhost:${port}/docs`);
+  console.log(`OpenAPI Spec: http://localhost:${port}/openapi.json`);
 }
 bootstrap();

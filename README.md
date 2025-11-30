@@ -4,122 +4,62 @@
 
 **Industry**: Marketing  
 **Domain**: https://vidscoreai.shtrial.com  
-**Type**: Frontend UX Demo (Backend AI Implementation Planned)
+**Type**: Full-stack AI Application
 
 ## Overview
 
-VidScoreAI is a platform for analyzing video performance and generating actionable insights. **Currently, it's a frontend-only UX prototype** that simulates video analysis and scoring. The backend AI implementation is planned for future development.
-
-### Current Status
-
-⚠️ **Frontend-Only Demo**: This is currently a UX prototype with:
-- Simulated video upload and analysis flow
-- Static performance scores and recommendations
-- No backend, database, or AI SDKs yet
-- All analysis is simulated in the browser
-
-### Why VidScoreAI?
-
-Traditional video analytics require manual review and lack AI-powered insights. VidScoreAI will use AI to:
-- **Analyze video content** automatically using computer vision and NLP
-- **Score performance** with automated metrics and benchmarks
-- **Generate insights** with AI-powered recommendations for optimization
-- **Compare videos** across time and variants for performance tracking
-
-## Planned AI Features
-
-- **Video Analysis**: AI-powered analysis of video content, engagement, and performance
-- **Performance Scoring**: Automated scoring of video effectiveness
-- **Insights Generation**: AI-generated recommendations for video optimization
-- **Visual Analysis**: Computer vision for frame-by-frame analysis
+VidScoreAI is a platform for analyzing video performance and generating actionable insights. It uses AI to:
+- **Analyze video content** automatically.
+- **Score performance** with automated metrics and benchmarks.
+- **Generate insights** with AI-powered recommendations for optimization.
 
 ## Tech Stack
 
 - **Framework**: Next.js 15 (App Router), React 18, TypeScript
-- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai_db`) via Prisma
-- **AI**: Azure OpenAI Responses API (v1 GA) exclusively (via `@shared/ai` package)
-  - Chat/Code: `gpt-5.1-codex-mini` (via Responses API for default & heavy tasks)
-  - Embeddings: `text-embedding-3-small`
-  - Image: `gpt-image-1-mini`
-- **Search**: Planned – future backend search/RAG should use Postgres + pgvector on the shared Postgres database instead of Azure AI Search indexes
-- **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai`) in `rg-shared-data`
+- **Backend**: NestJS (Node.js)
+- **Database**: Azure PostgreSQL (`pg-shared-apps-eastus2`, database: `vidscoreai`) via Prisma
+- **AI**: Azure OpenAI (via `openai` package)
+  - Chat/Code: `gpt-5.1`
+- **Storage**: Azure Blob Storage (`stmahumsharedapps`, container: `vidscoreai`)
 - **Deployment**:
-  - Frontend: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
-  - Backend: Container App `vidscoreai-api` in `cae-shared-apps` (Consumption plan)
+  - Frontend: Azure Static Web App `vidscoreai`
+  - Backend: Container App `vidscoreai-api`
 - **Custom Domain**: `vidscoreai.shtrial.com`
 
 ## Demo URLs
 
 - **Frontend**: https://vidscoreai.shtrial.com
 - **API Base URL**: https://api.vidscoreai.shtrial.com
-- **API Docs**: https://api.vidscoreai.shtrial.com/docs
-
-## End-to-end Testing
-
-This project uses Playwright for E2E tests.
-
-```bash
-pnpm install
-pnpm test:e2e
-```
-
-The `pretest:e2e` hook automatically runs `pnpm exec playwright install` to ensure browsers are installed before tests run.
-
-## Azure OpenAI Validation
-
-Validate Responses API configuration:
-
-```bash
-pnpm validate:responses-api
-```
-
-This checks environment variables, endpoint format, and API connectivity.
 
 ## Architecture
 
-- **Monorepo**: pnpm workspaces with Turborepo
 - **Apps**:
   - `apps/frontend`: Next.js 15 full-stack application (App Router)
-- **Packages**:
-  - `packages/shared-ai`: Shared Azure OpenAI client (`@shared/ai`)
-  - `packages/shared-data`: Shared Prisma, Search, Storage clients (`@shared/data`)
-- **API Routes**: Next.js App Router API routes within the frontend app
+  - `apps/backend`: NestJS API Service
+- **Flow**:
+  1. Frontend initiates upload -> Backend creates record & returns SAS Token.
+  2. Frontend uploads directly to Azure Blob Storage.
+  3. Frontend confirms upload -> Backend triggers AI analysis.
+  4. Backend processes video (mocked/AI) and stores results in Postgres.
+  5. Frontend polls for completion and displays results.
 
 ## Environment Variables
 
-**No Key Vault**: All secrets/config via App Settings and environment variables.
-
-**No OpenAI.com**: Only Azure OpenAI endpoint (`shared-openai-eastus2`).
-
-See `docs/CONFIG.md` and `.env.example` for the complete schema. Key variables:
+See `.env.example` for the complete schema. Key variables:
 
 ```env
-# Azure OpenAI Responses API (v1 GA)
-AZURE_OPENAI_ENDPOINT=https://shared-openai-eastus2.cognitiveservices.azure.com/
-AZURE_OPENAI_API_KEY=<your-key>
-AZURE_OPENAI_RESPONSES_URL=https://shared-openai-eastus2.cognitiveservices.azure.com/openai/v1/responses
-AZURE_OPENAI_EMBEDDING_ENDPOINT=https://shared-openai-eastus2.cognitiveservices.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15
-
-# Model Configuration
-AI_MODEL_GENERAL=gpt-5.1-codex-mini
-AI_MODEL_EMBEDDING=text-embedding-3-small
-AI_MODEL_IMAGE=gpt-image-1-mini
-
-# PostgreSQL (Shared - via @shared/data package)
-SHARED_PG_CONNECTION_STRING=postgresql://<user>:<pass>@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai_db?sslmode=require
-
-# Azure Storage (Shared - via @shared/data package)
-AZURE_STORAGE_CONNECTION_STRING=<connection-string>
-AZURE_STORAGE_CONTAINER=vidscoreai
+# Backend
+DATABASE_URL=postgresql://pgadmin:WalidSahab1125@pg-shared-apps-eastus2.postgres.database.azure.com:5432/vidscoreai
+AZURE_STORAGE_CONNECTION_STRING=...
+AZURE_OPENAI_ENDPOINT=...
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_DEPLOYMENT_ID=gpt-5.1
 ```
 
 ## Prerequisites
 
-Before you begin, ensure you have:
-
 - **Node.js**: >=20.0.0
 - **pnpm**: >=8.0.0 (`npm install -g pnpm`)
-- **Azure Account**: Access to shared Azure resources (for future backend implementation)
 
 ## Installation
 
@@ -136,166 +76,27 @@ cd VidScoreAI
 pnpm install
 ```
 
-### 3. Configure Environment (Optional - for future backend)
-
-```bash
-# Copy example environment file
-cp .env.example .env.local
-
-# Edit .env.local with your Azure credentials (when backend is implemented)
-# See docs/CONFIG.md for detailed instructions
-```
-
 ## Development
-
-### Project Structure
-
-```
-VidScoreAI/
-├── apps/
-│   └── frontend/          # Next.js 15 app (App Router)
-│       ├── app/
-│       │   ├── page.tsx   # Main marketing + upload + scoring flow
-│       │   ├── editor/    # Multi-file editor flow
-│       │   └── api/       # API routes (planned, not yet implemented)
-│       └── components/
-│           ├── video-uploader.tsx      # Drag-and-drop file picker
-│           ├── loading-analysis.tsx    # Simulated loading sequence
-│           └── performance-report.tsx   # Static scores + PDF export
-├── packages/
-│   ├── shared-ai/        # Shared Azure OpenAI client (planned)
-│   └── shared-data/      # Shared Prisma, Search, Storage clients (planned)
-└── e2e/                  # Playwright E2E tests
-```
 
 ### Running the Application
 
 ```bash
-# Start Next.js dev server (recommended)
+# Start Backend
+cd apps/backend
 pnpm dev
 
-# The app will be available at http://localhost:3000
+# Start Frontend
+cd apps/frontend
+pnpm dev
 ```
 
-**Important**: Use `pnpm dev` for development - it enables hot-reload. Don't run `pnpm build` during interactive development.
-
-### Available Commands
+### Database Setup
 
 ```bash
-# Development
-pnpm dev                  # Start Next.js dev server
-
-# Building
-pnpm build                # Build Next.js app
-pnpm start                # Start production server
-
-# Testing
-pnpm test                 # Run Playwright E2E tests
-pnpm test:ui              # Run tests with UI
-pnpm test:mobile         # Run mobile tests only
-pnpm test:desktop        # Run desktop tests only
-pnpm lint                 # Lint all code
-pnpm typecheck           # TypeScript type checking
+cd apps/backend
+npx prisma generate
+# npx prisma db push # (Requires valid DATABASE_URL)
 ```
-
-### Current Behavior
-
-**Upload & Analysis Flow**:
-- `VideoUploader` collects a local `File` (no network calls)
-- `LoadingAnalysis` shows timed steps using `setInterval`/`setTimeout`
-- After ~5 seconds, shows `PerformanceReport` with static scores
-
-**Scoring & Recommendations**:
-- Uses hard-coded `overallScore` (e.g., 82)
-- Static list of sections with fixed scores
-- Suggestion text is static, not AI-generated
-- Generates PDF via `html2pdf.js` from rendered DOM
-
-**Editor Flow**:
-- `MultiFileUploader`, `StyleSelector`, `VideoGeneration` are pure client components
-- File upload and style selection are local-only
-- No backend job or Azure Media Services integration yet
-
-## Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-### Development Workflow
-
-1. **Create a branch**: `git checkout -b feature/your-feature-name`
-2. **Make changes**: Follow coding standards (see [`.github/copilot-instructions.md`](./.github/copilot-instructions.md))
-3. **Test your changes**: `pnpm lint && pnpm typecheck && pnpm test`
-4. **Commit**: Use conventional commits (`feat:`, `fix:`, `docs:`, etc.)
-5. **Push and create PR**: Target `main` branch
-
-### Code Standards
-
-- **TypeScript**: Strict mode enabled, no `any` types
-- **Next.js**: Use Server Components by default, Client Components only when needed
-- **Testing**: Add Playwright tests for new flows, maintain mobile-first approach
-- **Current State**: Remember this is frontend-only - don't assume backend features exist
-
-See [`.github/copilot-instructions.md`](./.github/copilot-instructions.md) for detailed coding standards.
-
-### PR Guidelines
-
-- **Title**: `[VidScoreAI] Description` format
-- **Description**: Include what changed and why
-- **Tests**: All tests must pass (especially E2E tests)
-- **Type Safety**: No TypeScript errors
-- **Mobile Testing**: Test on mobile viewport (390x844px)
-
-## Future Backend Implementation
-
-When implementing the backend, follow these patterns:
-
-### API Routes
-
-- Add `app/api/*/route.ts` handlers (Next.js API routes)
-- Use `NextRequest`/`NextResponse` for request handling
-- Return structured JSON that existing UI can render
-
-### Azure OpenAI Integration
-
-- Use shared `shared-openai-eastus2` Azure OpenAI resource
-- Models: `gpt-5.1-mini` (analysis), `text-embedding-3-small` (embeddings), `gpt-image-1-mini` (vision)
-- All AI calls must be server-side (API routes only), never in React components
-
-### Video Storage
-
-- Use Azure Blob Storage for video uploads (SAS URLs)
-- Design background workflow for heavy processing (Container Apps jobs or Functions)
-- Store analysis results in database for comparison across time
-
-## Troubleshooting
-
-### Common Issues
-
-**Build Errors**:
-- Clear `.next` directory: `rm -rf .next`
-- Rebuild: `pnpm build`
-- Check for TypeScript errors: `pnpm typecheck`
-
-**Test Failures**:
-- Ensure mobile viewport tests are passing (390x844px)
-- Use role-based selectors (`getByRole`) when possible
-- Mock any future API endpoints in tests
-
-**For more help**: See `docs/CONFIG.md` or check `.github/copilot-instructions.md` for current implementation status
-
-## Deployment
-
-- **Frontend**: Azure Static Web App `vidscoreai` in `rg-shared-web` (Free SKU)
-- **Backend**: Planned - Azure Container App `vidscoreai-api` in `cae-shared-apps` (when implemented)
-- **CI/CD**: `.github/workflows/ci-cd.yml` - auto-deploys on push to `main`
-- **Custom Domain**: `vidscoreai.shtrial.com`
-
-## Documentation
-
-- **AGENTS.md**: AI coding agent guide
-- **.github/copilot-instructions.md**: GitHub Copilot instructions (includes current implementation status)
-- **docs/ARCHITECTURE.md**: Detailed architecture documentation
-- **docs/CONFIG.md**: Environment variables and configuration guide
 
 ## License
 
@@ -318,7 +119,7 @@ VidScoreAI runs on the **MahumTech Shared Azure Platform**.
 
 | Resource Group | Purpose |
 | :--- | :--- |
-| `rg-shared-ai` | Azure OpenAI `shared-openai-eastus2`, AI Search `shared-search-standard-eastus2` |
+| `rg-shared-ai` | Azure OpenAI `shared-openai-eastus2` |
 | `rg-shared-data` | PostgreSQL `pg-shared-apps-eastus2`, Storage `stmahumsharedapps` |
 | `rg-shared-container-apps` | Container Apps environments, ACR `acrsharedapps` |
 | `rg-shared-web` | Static Web Apps |
@@ -329,9 +130,8 @@ App-specific resources (all on shared services):
 
 | Resource | Name | Service |
 | :--- | :--- | :--- |
-| Database | `vidscoreai_db` | `pg-shared-apps-eastus2` |
+| Database | `vidscoreai` | `pg-shared-apps-eastus2` |
 | Blob Container | `vidscoreai` | `stmahumsharedapps` |
-| Search / RAG (planned) | Postgres + pgvector in `vidscoreai_db` | `pg-shared-apps-eastus2` |
 | Static Web App | `vidscoreai` | `rg-shared-web` |
 | Container App | `ca-vidscoreai-api` | `rg-shared-container-apps` |
 

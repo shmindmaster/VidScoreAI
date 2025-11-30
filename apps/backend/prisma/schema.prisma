@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  extensions = [vector]
+}
+
+model Video {
+  id           String    @id @default(uuid())
+  filename     String
+  originalName String
+  url          String?
+  mimeType     String
+  size         Int
+  status       String    @default("PENDING")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  analysis     Analysis?
+}
+
+model Analysis {
+  id           String   @id @default(uuid())
+  videoId      String   @unique
+  video        Video    @relation(fields: [videoId], references: [id])
+  overallScore Int
+  summary      String
+  details      Json?
+  createdAt    DateTime @default(now())
+}
+
+model KnowledgeBase {
+  id        String                 @id @default(uuid())
+  title     String                 @unique
+  content   String
+  metadata  Json?
+  embedding Unsupported("vector")?
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+
+  @@map("knowledge_base")
+}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-
+import { useState } from 'react';
 import { Download, Play, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -9,6 +8,7 @@ import 'react-circular-progressbar/dist/styles.css';
 interface PerformanceReportProps {
   isVisible: boolean;
   videoFile: File | null;
+  analysisData?: any;
 }
 
 interface ScoreSection {
@@ -17,115 +17,33 @@ interface ScoreSection {
   suggestions: string[];
 }
 
-interface RagResult {
-  id: string;
-  title: string;
-  content: string;
-  metadata: Record<string, unknown>;
-  score: number;
-}
-
-export default function PerformanceReport({ isVisible, videoFile }: PerformanceReportProps) {
+export default function PerformanceReport({ isVisible, videoFile, analysisData }: PerformanceReportProps) {
   const [isDownloading, setIsDownloading] = useState(false);
-  const [ragResults, setRagResults] = useState<RagResult[] | null>(null);
-  const [ragLoading, setRagLoading] = useState(false);
-  const [ragError, setRagError] = useState<string | null>(null);
 
-  const apiBaseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001';
+  const overallScore = analysisData?.overallScore || 0;
 
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let cancelled = false;
-
-    async function fetchRagInsights() {
-      setRagLoading(true);
-      setRagError(null);
-
-      try {
-        const response = await fetch(`${apiBaseUrl}/api/rag/search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query:
-              'best practices for video advertising performance, hooks, pacing, CTAs, and visual overlays',
-            limit: 4,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const json = await response.json();
-
-        if (!json?.success) {
-          throw new Error(json?.error || 'RAG search failed');
-        }
-
-        const results = (json.data?.results || []) as RagResult[];
-
-        if (!cancelled) {
-          setRagResults(results);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('RAG fetch error', error);
-        if (!cancelled) {
-          setRagError('Unable to fetch additional AI insights right now.');
-        }
-      } finally {
-        if (!cancelled) {
-          setRagLoading(false);
-        }
-      }
-    }
-
-    void fetchRagInsights();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [apiBaseUrl, isVisible]);
-
-  const overallScore = 82;
-
-  const sections: ScoreSection[] = [
+  const sections: ScoreSection[] = analysisData && analysisData.details ? [
     {
       title: "Hook Strength",
-      score: 95,
-      suggestions: [
-        "Excellent opening. The first 3 seconds effectively capture attention with a strong visual and a question."
-      ]
+      score: analysisData.details.hook?.score || 0,
+      suggestions: [analysisData.details.hook?.feedback || "No feedback available."]
     },
     {
       title: "Pacing & Flow",
-      score: 75,
-      suggestions: [
-        "Pacing is strong but dips around the 15s mark.",
-        "Consider adding a dynamic transition or B-roll to maintain momentum."
-      ]
+      score: analysisData.details.pacing?.score || 0,
+      suggestions: [analysisData.details.pacing?.feedback || "No feedback available."]
     },
     {
       title: "Call-to-Action (CTA)",
-      score: 60,
-      suggestions: [
-        "The CTA is present but could be stronger.",
-        "Try making the on-screen text larger and have the voice-over explicitly state the offer."
-      ]
+      score: analysisData.details.cta?.score || 0,
+      suggestions: [analysisData.details.cta?.feedback || "No feedback available."]
     },
     {
-      title: "Visual & Text Overlays",
-      score: 88,
-      suggestions: [
-        "Great use of text overlays to reinforce key points.",
-        "Ensure they remain on screen long enough to be read easily on mobile devices."
-      ]
+      title: "Visuals",
+      score: analysisData.details.visuals?.score || 0,
+      suggestions: [analysisData.details.visuals?.feedback || "No feedback available."]
     }
-  ];
+  ] : [];
 
   const getScoreColor = (score: number) => {
     if (score >= 75) return '#22c55e'; // green
@@ -141,11 +59,8 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
 
   const handleDownloadPDF = async () => {
     setIsDownloading(true);
-    
     try {
-      // Dynamic import to avoid SSR issues
       const html2pdf = (await import('html2pdf.js')).default;
-      
       const element = document.getElementById('performance-report');
       const opt = {
         margin: 1,
@@ -154,7 +69,6 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
       };
-      
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -168,11 +82,8 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
   return (
     <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700 overflow-hidden">
       <div id="performance-report" className="p-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-white">
-            VidScore AI: Performance Report
-          </h2>
+          <h2 className="text-3xl font-bold text-white">VidScore AI: Performance Report</h2>
           <button
             onClick={handleDownloadPDF}
             disabled={isDownloading}
@@ -184,9 +95,7 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Overall Score and Video */}
           <div className="space-y-6">
-            {/* Overall Score */}
             <div className="bg-gray-800/50 rounded-xl p-6 text-center">
               <h3 className="text-lg font-semibold text-white mb-4">Overall Score</h3>
               <div className="w-32 h-32 mx-auto mb-4">
@@ -209,7 +118,6 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
               </p>
             </div>
 
-            {/* Video Thumbnail */}
             {videoFile && (
               <div className="bg-gray-800/50 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Analyzed Video</h3>
@@ -225,11 +133,9 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
             )}
           </div>
 
-          {/* Right Columns - Detailed Breakdown */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
             {sections.map((section, index) => {
               const Icon = getScoreIcon(section.score);
-              
               return (
                 <div key={index} className="bg-gray-800/50 rounded-xl p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -247,7 +153,6 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
                       </span>
                     </div>
                   </div>
-                  
                   <div className="space-y-2">
                     {section.suggestions.map((suggestion, suggestionIndex) => (
                       <div key={suggestionIndex} className="flex items-start space-x-2">
@@ -260,46 +165,6 @@ export default function PerformanceReport({ isVisible, videoFile }: PerformanceR
               );
             })}
           </div>
-
-          {ragLoading && (
-            <div className="mt-8 text-sm text-gray-400">
-              Fetching additional AI insights...
-            </div>
-          )}
-
-          {ragError && !ragLoading && (
-            <div className="mt-8 text-sm text-red-400">{ragError}</div>
-          )}
-
-          {!ragLoading && !ragError && ragResults && ragResults.length > 0 && (
-            <div className="mt-10 border-t border-gray-800 pt-6">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                AI Knowledge Base Insights
-              </h3>
-              <div className="space-y-4">
-                {ragResults.map((result) => (
-                  <div
-                    key={result.id}
-                    className="bg-gray-800/50 rounded-lg p-4 border border-gray-700"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-white">
-                        {result.title}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        Relevance: {Math.round(result.score * 100)}%
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      {result.content.length > 260
-                        ? `${result.content.slice(0, 260)}...`
-                        : result.content}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -5,17 +5,61 @@ import { ArrowDown, Zap, BarChart3, Target, Sparkles } from 'lucide-react';
 import VideoUploader from '@/components/video-uploader';
 import LoadingAnalysis from '@/components/loading-analysis';
 import PerformanceReport from '@/components/performance-report';
+import { initUpload, uploadFileToBlob, confirmUpload, getVideoStatus } from '@/lib/api';
 
 export default function Home() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showUploader, setShowUploader] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [analysisData, setAnalysisData] = useState<any>(null);
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = async (file: File) => {
     setUploadedFile(file);
     setShowUploader(false);
     setShowLoading(true);
+
+    try {
+      // 1. Init Upload
+      const { id, uploadUrl } = await initUpload(file.name, file.type, file.size);
+      
+      // 2. Upload to Blob
+      await uploadFileToBlob(uploadUrl, file);
+      
+      // 3. Confirm & Trigger Processing
+      await confirmUpload(id);
+      
+      // 4. Poll for results
+      const pollInterval = setInterval(async () => {
+        try {
+          const video = await getVideoStatus(id);
+          if (video.status === 'COMPLETED') {
+            clearInterval(pollInterval);
+            setAnalysisData(video.analysis);
+            handleAnalysisComplete();
+          } else if (video.status === 'FAILED') {
+            clearInterval(pollInterval);
+            alert('Analysis failed. Please try again later.');
+            resetFlow();
+          }
+        } catch (e) {
+          console.error("Polling error", e);
+          // Optionally, break after several errors or show a specific error
+        }
+      }, 3000); // Poll every 3 seconds
+
+    } catch (e) {
+      console.error("Upload process failed", e);
+      alert('Upload failed. Please try again.');
+      resetFlow();
+    }
+  };
+
+  const resetFlow = () => {
+    setShowLoading(false);
+    setShowUploader(true);
+    setUploadedFile(null);
+    setAnalysisData(null);
   };
 
   const handleAnalysisComplete = () => {
@@ -24,7 +68,7 @@ export default function Home() {
   };
 
   const scrollToUploader = () => {
-    document.getElementById('uploader-section')?.scrollIntoView({ 
+    document.getElementById('uploader-section')?.scrollIntoView({
       behavior: 'smooth',
       block: 'start'
     });
@@ -34,14 +78,12 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
         </div>
 
         <div className="relative z-10 text-center max-w-5xl mx-auto">
-          {/* Main Headline */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
             Stop Guessing.{' '}
             <span className="bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
@@ -49,13 +91,11 @@ export default function Home() {
             </span>
           </h1>
 
-          {/* Sub-headline */}
           <p className="text-xl sm:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
             VidScore AI analyzes your video ads and UGC to give you actionable, data-driven insights. 
             Turn good videos into high-performing assets.
           </p>
 
-          {/* CTA Button */}
           <button
             onClick={scrollToUploader}
             className="group relative bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
@@ -67,7 +107,6 @@ export default function Home() {
             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </button>
 
-          {/* Scroll Indicator */}
           <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
             <ArrowDown className="h-6 w-6 text-gray-400" />
           </div>
@@ -129,12 +168,13 @@ export default function Home() {
           
           <LoadingAnalysis 
             isVisible={showLoading}
-            onComplete={handleAnalysisComplete}
+            // onComplete prop removed as it's handled by the polling logic in handleFileUpload
           />
           
           <PerformanceReport 
             isVisible={showReport}
             videoFile={uploadedFile}
+            analysisData={analysisData}
           />
         </div>
       </section>
